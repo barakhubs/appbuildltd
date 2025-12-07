@@ -290,14 +290,7 @@ $serviceCategories = getServiceCategories();
 
         <!-- Google Maps Embed (placeholder) -->
         <div class="bg-gray-200 h-96 rounded-lg flex items-center justify-center">
-            <div class="text-center">
-                <i class="fas fa-map-marker-alt text-primary-blue text-4xl mb-4"></i>
-                <h3 class="text-xl font-semibold text-gray-800 mb-2">Interactive Map</h3>
-                <p class="text-gray-600">Google Maps integration would go here</p>
-                <p class="text-sm text-gray-500 mt-2">
-                    Replace this section with actual Google Maps embed code
-                </p>
-            </div>
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d63835.82688512447!2d32.71378124459197!3d0.36087755670366384!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x177dc7b71409b0a5%3A0xdddaf82b549ec570!2sMukono!5e0!3m2!1sen!2sug!4v1765114280771!5m2!1sen!2sug" width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
         </div>
     </div>
 </section>

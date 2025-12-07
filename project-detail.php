@@ -23,7 +23,7 @@ $pageTitle = $project['title'];
 $metaDescription = $project['description'] ? truncateText(strip_tags($project['description']), 160) : 'Discover how AppBuild Ltd. delivered exceptional results for this client project.';
 
 // Get related projects (same category)
-$relatedProjects = getProjects(3, $project['category']);
+$relatedProjects = getProjects(3, $project['category'] ?? '');
 $relatedProjects = array_filter($relatedProjects, function ($proj) use ($project) {
     return $proj['id'] !== $project['id'];
 });
@@ -57,9 +57,11 @@ if ($project['images']) {
                 <div>
                     <!-- Project Meta -->
                     <div class="flex flex-wrap items-center space-x-4 mb-6 text-blue-200">
-                        <span class="bg-secondary-red text-white px-3 py-1 rounded-full text-sm">
-                            <?php echo htmlspecialchars($project['category']); ?>
-                        </span>
+                        <?php if (!empty($project['category'])): ?>
+                            <span class="bg-secondary-red text-white px-3 py-1 rounded-full text-sm">
+                                <?php echo htmlspecialchars($project['category']); ?>
+                            </span>
+                        <?php endif; ?>
                         <span class="flex items-center">
                             <i class="fas fa-calendar-alt mr-2"></i>
                             <?php echo formatDate($project['completed_at'] ?? $project['created_at']); ?>
@@ -82,7 +84,7 @@ if ($project['images']) {
 
                     <!-- Project Stats -->
                     <div class="grid grid-cols-2 gap-6 mt-8">
-                        <?php if ($project['duration']): ?>
+                        <?php if (!empty($project['duration'])): ?>
                             <div class="text-center">
                                 <div class="text-3xl font-bold text-secondary-red"><?php echo htmlspecialchars($project['duration']); ?></div>
                                 <div class="text-blue-200 text-sm">Project Duration</div>
@@ -98,7 +100,7 @@ if ($project['images']) {
 
                 <!-- Featured Image -->
                 <div class="order-first lg:order-last">
-                    <?php if ($project['featured_image']): ?>
+                    <?php if (!empty($project['featured_image'])): ?>
                         <div class="relative">
                             <img src="<?php echo getImageUrl('projects/' . $project['featured_image']); ?>"
                                 alt="<?php echo htmlspecialchars($project['title']); ?>"
@@ -149,7 +151,7 @@ if ($project['images']) {
                     <?php endif; ?>
 
                     <!-- Technologies Used -->
-                    <?php if ($project['technologies']): ?>
+                    <?php if (!empty($project['technologies'])): ?>
                         <div class="mb-12">
                             <h2 class="text-3xl font-bold text-gray-800 mb-6">Technologies Used</h2>
                             <div class="flex flex-wrap gap-3">
@@ -166,10 +168,10 @@ if ($project['images']) {
                     <?php endif; ?>
 
                     <!-- Challenges & Solutions -->
-                    <?php if ($project['challenges'] || $project['solution']): ?>
+                    <?php if (!empty($project['challenges']) || !empty($project['solution'])): ?>
                         <div class="mb-12">
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                <?php if ($project['challenges']): ?>
+                                <?php if (!empty($project['challenges'])): ?>
                                     <div class="bg-red-50 p-6 rounded-lg border border-red-100">
                                         <h3 class="text-xl font-bold text-red-800 mb-4 flex items-center">
                                             <i class="fas fa-exclamation-triangle mr-2"></i>
@@ -207,18 +209,6 @@ if ($project['images']) {
                             </div>
                         </div>
                     <?php endif; ?>
-
-                    <!-- Client Testimonial -->
-                    <?php if ($project['testimonial']): ?>
-                        <div class="bg-gray-50 p-8 rounded-lg border-l-4 border-primary-blue">
-                            <blockquote class="text-xl text-gray-700 italic mb-4">
-                                "<?php echo htmlspecialchars($project['testimonial']); ?>"
-                            </blockquote>
-                            <cite class="text-gray-600 font-semibold">
-                                - <?php echo htmlspecialchars($project['client_name'] ?? 'Satisfied Client'); ?>
-                            </cite>
-                        </div>
-                    <?php endif; ?>
                 </div>
 
                 <!-- Sidebar -->
@@ -227,17 +217,19 @@ if ($project['images']) {
                     <div class="bg-white border border-gray-200 rounded-lg p-6 mb-8 shadow-sm">
                         <h3 class="text-lg font-semibold text-gray-800 mb-4">Project Information</h3>
                         <ul class="space-y-3 text-sm">
-                            <li class="flex justify-between">
-                                <span class="text-gray-600">Category:</span>
-                                <span class="font-medium text-gray-800"><?php echo htmlspecialchars($project['category']); ?></span>
-                            </li>
+                            <?php if (!empty($project['category'])): ?>
+                                <li class="flex justify-between">
+                                    <span class="text-gray-600">Category:</span>
+                                    <span class="font-medium text-gray-800"><?php echo htmlspecialchars($project['category']); ?></span>
+                                </li>
+                            <?php endif; ?>
                             <?php if ($project['client_name']): ?>
                                 <li class="flex justify-between">
                                     <span class="text-gray-600">Client:</span>
                                     <span class="font-medium text-gray-800"><?php echo htmlspecialchars($project['client_name']); ?></span>
                                 </li>
                             <?php endif; ?>
-                            <?php if ($project['duration']): ?>
+                            <?php if (!empty($project['duration'])): ?>
                                 <li class="flex justify-between">
                                     <span class="text-gray-600">Duration:</span>
                                     <span class="font-medium text-gray-800"><?php echo htmlspecialchars($project['duration']); ?></span>
@@ -263,13 +255,15 @@ if ($project['images']) {
                                     Back to Projects
                                 </a>
                             </li>
-                            <li>
-                                <a href="<?php echo SITE_URL; ?>/projects?category=<?php echo urlencode($project['category']); ?>"
-                                    class="text-gray-600 hover:text-primary-blue transition-colors flex items-center">
-                                    <i class="fas fa-tags mr-2"></i>
-                                    Similar Projects
-                                </a>
-                            </li>
+                            <?php if (!empty($project['category'])): ?>
+                                <li>
+                                    <a href="<?php echo SITE_URL; ?>/projects?category=<?php echo urlencode($project['category']); ?>"
+                                        class="text-gray-600 hover:text-primary-blue transition-colors flex items-center">
+                                        <i class="fas fa-tags mr-2"></i>
+                                        Similar Projects
+                                    </a>
+                                </li>
+                            <?php endif; ?>
                             <li>
                                 <a href="<?php echo SITE_URL; ?>/contact"
                                     class="text-gray-600 hover:text-primary-blue transition-colors flex items-center">
@@ -341,7 +335,7 @@ if ($project['images']) {
                     <?php foreach ($relatedProjects as $relatedProject): ?>
                         <div class="bg-white rounded-lg shadow-lg overflow-hidden card-hover">
                             <div class="h-48 bg-gradient-to-br from-primary-blue to-blue-600 flex items-center justify-center">
-                                <?php if ($relatedProject['featured_image']): ?>
+                                <?php if (!empty($relatedProject['featured_image'])): ?>
                                     <img src="<?php echo getImageUrl('projects/' . $relatedProject['featured_image']); ?>"
                                         alt="<?php echo htmlspecialchars($relatedProject['title']); ?>"
                                         class="w-full h-full object-cover">
@@ -350,21 +344,23 @@ if ($project['images']) {
                                 <?php endif; ?>
                             </div>
                             <div class="p-6">
-                                <div class="flex items-center justify-between mb-3">
-                                    <span class="bg-primary-blue text-white text-xs px-2 py-1 rounded-full">
-                                        <?php echo htmlspecialchars($relatedProject['category']); ?>
-                                    </span>
-                                    <span class="text-gray-500 text-sm">
-                                        <?php echo formatDate($relatedProject['completed_at'] ?? $relatedProject['created_at']); ?>
-                                    </span>
-                                </div>
+                                <?php if (!empty($relatedProject['category'])): ?>
+                                    <div class="flex items-center justify-between mb-3">
+                                        <span class="bg-primary-blue text-white text-xs px-2 py-1 rounded-full">
+                                            <?php echo htmlspecialchars($relatedProject['category']); ?>
+                                        </span>
+                                        <span class="text-gray-500 text-sm">
+                                            <?php echo formatDate($relatedProject['completed_at'] ?? $relatedProject['created_at']); ?>
+                                        </span>
+                                    </div>
+                                <?php endif; ?>
                                 <h3 class="text-lg font-bold text-gray-800 mb-3 hover:text-primary-blue transition-colors">
                                     <a href="<?php echo SITE_URL; ?>/projects/<?php echo $relatedProject['slug']; ?>">
                                         <?php echo htmlspecialchars($relatedProject['title']); ?>
                                     </a>
                                 </h3>
                                 <p class="text-gray-600 mb-4 text-sm">
-                                    <?php echo $relatedProject['short_description'] ? truncateText(strip_tags($relatedProject['short_description']), 100) : truncateText(strip_tags($relatedProject['description']), 100); ?>
+                                    <?php echo !empty($relatedProject['short_description']) ? truncateText(strip_tags($relatedProject['short_description']), 100) : truncateText(strip_tags($relatedProject['description'] ?? ''), 100); ?>
                                 </p>
                                 <a href="<?php echo SITE_URL; ?>/projects/<?php echo $relatedProject['slug']; ?>"
                                     class="text-primary-blue font-semibold hover:text-blue-700 transition-colors text-sm">

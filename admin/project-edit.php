@@ -14,24 +14,29 @@ $project = [
     'id' => '',
     'title' => '',
     'slug' => '',
-    'excerpt' => '',
-    'content' => '',
-    'image_url' => '',
-    'client' => '',
-    'project_date' => '',
-    'project_url' => '',
-    'category' => '',
-    'is_featured' => false
+    'thumbnail' => '',
+    'service_category' => '',
+    'client_name' => '',
+    'description' => '',
+    'challenge' => '',
+    'solution' => '',
+    'results' => '',
+    'images' => '',
+    'featured' => false
 ];
+
+$serviceCategories = getServiceCategories();
 
 if (!$is_new) {
     $stmt = $db->prepare("SELECT * FROM projects WHERE id = :id");
     $stmt->execute(['id' => $id]);
-    $project = $stmt->fetch(PDO::FETCH_ASSOC);
-    if (!$project) {
+    $fetchedProject = $stmt->fetch(PDO::FETCH_ASSOC);
+    if (!$fetchedProject) {
         header("Location: projects.php");
         exit;
     }
+    // Merge fetched data with defaults to ensure all keys exist
+    $project = array_merge($project, $fetchedProject);
     $pageTitle = 'Edit Project';
 } else {
     $pageTitle = 'Add New Project';
@@ -40,47 +45,47 @@ if (!$is_new) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $title = $_POST['title'] ?? '';
     $slug = !empty($_POST['slug']) ? createSlug($_POST['slug']) : createSlug($title);
-    $excerpt = $_POST['excerpt'] ?? '';
-    $content = $_POST['content'] ?? '';
-    $client = $_POST['client'] ?? '';
-    $project_date = $_POST['project_date'] ?? '';
-    $project_url = $_POST['project_url'] ?? '';
-    $category = $_POST['category'] ?? '';
-    $is_featured = isset($_POST['is_featured']) ? 1 : 0;
+    $description = $_POST['description'] ?? '';
+    $challenge = $_POST['challenge'] ?? '';
+    $solution = $_POST['solution'] ?? '';
+    $results = $_POST['results'] ?? '';
+    $client_name = $_POST['client_name'] ?? '';
+    $service_category = $_POST['service_category'] ?? '';
+    $featured = isset($_POST['featured']) ? 1 : 0;
 
     // Image handling
-    $image_url = $_POST['existing_image_url'] ?? '';
-    if (isset($_FILES['image']) && $_FILES['image']['error'] == UPLOAD_ERR_OK) {
+    $thumbnail = $_POST['existing_thumbnail'] ?? '';
+    if (isset($_FILES['thumbnail_file']) && $_FILES['thumbnail_file']['error'] == UPLOAD_ERR_OK) {
         $upload_dir = '../uploads/projects/';
         if (!is_dir($upload_dir)) {
             mkdir($upload_dir, 0777, true);
         }
-        $filename = uniqid() . '-' . basename($_FILES['image']['name']);
+        $filename = uniqid() . '-' . basename($_FILES['thumbnail_file']['name']);
         $target_file = $upload_dir . $filename;
-        if (move_uploaded_file($_FILES['image']['tmp_name'], $target_file)) {
-            $image_url = 'uploads/projects/' . $filename;
+        if (move_uploaded_file($_FILES['thumbnail_file']['tmp_name'], $target_file)) {
+            $thumbnail = 'uploads/projects/' . $filename;
         }
     }
 
     if ($is_new) {
-        $sql = "INSERT INTO projects (title, slug, excerpt, content, image_url, client, project_date, project_url, category, is_featured) VALUES (:title, :slug, :excerpt, :content, :image_url, :client, :project_date, :project_url, :category, :is_featured)";
+        $sql = "INSERT INTO projects (title, slug, description, challenge, solution, results, thumbnail, client_name, service_category, featured) VALUES (:title, :slug, :description, :challenge, :solution, :results, :thumbnail, :client_name, :service_category, :featured)";
         $stmt = $db->prepare($sql);
     } else {
-        $sql = "UPDATE projects SET title = :title, slug = :slug, excerpt = :excerpt, content = :content, image_url = :image_url, client = :client, project_date = :project_date, project_url = :project_url, category = :category, is_featured = :is_featured WHERE id = :id";
+        $sql = "UPDATE projects SET title = :title, slug = :slug, description = :description, challenge = :challenge, solution = :solution, results = :results, thumbnail = :thumbnail, client_name = :client_name, service_category = :service_category, featured = :featured WHERE id = :id";
         $stmt = $db->prepare($sql);
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
     }
 
     $stmt->bindParam(':title', $title);
     $stmt->bindParam(':slug', $slug);
-    $stmt->bindParam(':excerpt', $excerpt);
-    $stmt->bindParam(':content', $content);
-    $stmt->bindParam(':image_url', $image_url);
-    $stmt->bindParam(':client', $client);
-    $stmt->bindParam(':project_date', $project_date);
-    $stmt->bindParam(':project_url', $project_url);
-    $stmt->bindParam(':category', $category);
-    $stmt->bindParam(':is_featured', $is_featured, PDO::PARAM_BOOL);
+    $stmt->bindParam(':description', $description);
+    $stmt->bindParam(':challenge', $challenge);
+    $stmt->bindParam(':solution', $solution);
+    $stmt->bindParam(':results', $results);
+    $stmt->bindParam(':thumbnail', $thumbnail);
+    $stmt->bindParam(':client_name', $client_name);
+    $stmt->bindParam(':service_category', $service_category);
+    $stmt->bindParam(':featured', $featured, PDO::PARAM_BOOL);
 
     if ($stmt->execute()) {
         header("Location: projects.php?saved=true");
@@ -90,94 +95,180 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-include 'header.php';
 ?>
+<!DOCTYPE html>
+<html lang="en">
 
-<div class="container mx-auto px-4 py-8">
-    <div class="flex justify-between items-center mb-6">
-        <h1 class="text-3xl font-bold text-gray-800"><?php echo $pageTitle; ?></h1>
-        <a href="projects.php" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded transition duration-300">
-            <i class="fas fa-arrow-left mr-2"></i>Back to Projects
-        </a>
-    </div>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?php echo $pageTitle; ?> - <?php echo SITE_NAME; ?></title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary-blue': '#265E9A',
+                        'secondary-red': '#F54927',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
 
-    <?php if (isset($error)): ?>
-        <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6" role="alert">
-            <p><?php echo $error; ?></p>
-        </div>
-    <?php endif; ?>
-
-    <form action="project-edit.php?id=<?php echo $id; ?>" method="POST" enctype="multipart/form-data" class="bg-white shadow-lg rounded-lg p-8">
-        <input type="hidden" name="id" value="<?php echo htmlspecialchars($project['id']); ?>">
-
-        <div class="mb-6">
-            <label for="title" class="block text-gray-700 text-sm font-bold mb-2">Title</label>
-            <input type="text" id="title" name="title" value="<?php echo htmlspecialchars($project['title']); ?>" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
-        </div>
-
-        <div class="mb-6">
-            <label for="slug" class="block text-gray-700 text-sm font-bold mb-2">Slug</label>
-            <input type="text" id="slug" name="slug" value="<?php echo htmlspecialchars($project['slug']); ?>" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-            <p class="text-gray-600 text-xs italic mt-2">Leave blank to auto-generate from title.</p>
-        </div>
-
-        <div class="mb-6">
-            <label for="excerpt" class="block text-gray-700 text-sm font-bold mb-2">Excerpt</label>
-            <textarea id="excerpt" name="excerpt" rows="3" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"><?php echo htmlspecialchars($project['excerpt']); ?></textarea>
-        </div>
-
-        <div class="mb-6">
-            <label for="content" class="block text-gray-700 text-sm font-bold mb-2">Content</label>
-            <textarea id="content" name="content" rows="10" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"><?php echo htmlspecialchars($project['content']); ?></textarea>
-        </div>
-
-        <div class="grid md:grid-cols-2 gap-6">
-            <div class="mb-6">
-                <label for="client" class="block text-gray-700 text-sm font-bold mb-2">Client</label>
-                <input type="text" id="client" name="client" value="<?php echo htmlspecialchars($project['client']); ?>" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-            </div>
-            <div class="mb-6">
-                <label for="project_date" class="block text-gray-700 text-sm font-bold mb-2">Project Date</label>
-                <input type="date" id="project_date" name="project_date" value="<?php echo htmlspecialchars($project['project_date']); ?>" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+<body class="bg-gray-100">
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b border-gray-200">
+        <div class="flex items-center justify-between px-6 py-4">
+            <h1 class="text-2xl font-bold text-primary-blue"><?php echo SITE_NAME; ?> - Admin</h1>
+            <div class="flex items-center space-x-4">
+                <span class="text-gray-600">Welcome, <?php echo $_SESSION['admin_username']; ?></span>
+                <a href="<?php echo SITE_URL; ?>" target="_blank"
+                    class="text-primary-blue hover:text-blue-700 transition-colors">
+                    <i class="fas fa-external-link-alt mr-1"></i>View Site
+                </a>
+                <a href="logout.php" class="text-red-600 hover:text-red-700 transition-colors">
+                    <i class="fas fa-sign-out-alt mr-1"></i>Logout
+                </a>
             </div>
         </div>
+    </header>
 
-        <div class="grid md:grid-cols-2 gap-6">
-            <div class="mb-6">
-                <label for="project_url" class="block text-gray-700 text-sm font-bold mb-2">Project URL</label>
-                <input type="url" id="project_url" name="project_url" value="<?php echo htmlspecialchars($project['project_url']); ?>" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-            </div>
-            <div class="mb-6">
-                <label for="category" class="block text-gray-700 text-sm font-bold mb-2">Category</label>
-                <input type="text" id="category" name="category" value="<?php echo htmlspecialchars($project['category']); ?>" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-            </div>
-        </div>
+    <div class="flex">
+        <!-- Sidebar -->
+        <aside class="bg-primary-blue text-white w-64 min-h-screen">
+            <nav class="p-6">
+                <ul class="space-y-2">
+                    <li>
+                        <a href="index.php" class="flex items-center p-3 rounded-lg hover:bg-blue-700 transition-colors">
+                            <i class="fas fa-tachometer-alt mr-3"></i>Dashboard
+                        </a>
+                    </li>
+                    <li>
+                        <a href="blog-manage.php" class="flex items-center p-3 rounded-lg hover:bg-blue-700 transition-colors">
+                            <i class="fas fa-blog mr-3"></i>Blog Posts
+                        </a>
+                    </li>
+                    <li>
+                        <a href="projects.php" class="flex items-center p-3 rounded-lg bg-blue-700 text-white">
+                            <i class="fas fa-project-diagram mr-3"></i>Projects
+                        </a>
+                    </li>
+                    <li>
+                        <a href="services.php" class="flex items-center p-3 rounded-lg hover:bg-blue-700 transition-colors">
+                            <i class="fas fa-cogs mr-3"></i>Services
+                        </a>
+                    </li>
+                    <li>
+                        <a href="submissions.php" class="flex items-center p-3 rounded-lg hover:bg-blue-700 transition-colors">
+                            <i class="fas fa-envelope mr-3"></i>Contact Submissions
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
 
-        <div class="mb-6">
-            <label for="image" class="block text-gray-700 text-sm font-bold mb-2">Featured Image</label>
-            <input type="file" id="image" name="image" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-            <input type="hidden" name="existing_image_url" value="<?php echo htmlspecialchars($project['image_url']); ?>">
-            <?php if ($project['image_url']): ?>
-                <div class="mt-4">
-                    <p class="text-gray-600">Current Image:</p>
-                    <img src="../<?php echo htmlspecialchars($project['image_url']); ?>" alt="Current project image" class="w-48 h-auto rounded mt-2">
+        <!-- Main Content -->
+        <main class="flex-1 p-6">
+            <!-- Page Header -->
+            <div class="flex items-center justify-between mb-8">
+                <div>
+                    <h2 class="text-3xl font-bold text-gray-800"><?php echo $pageTitle; ?></h2>
+                    <p class="text-gray-600 mt-2">Manage project portfolio and details.</p>
+                </div>
+                <a href="projects.php" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded transition duration-300">
+                    <i class="fas fa-arrow-left mr-2"></i>Back to Projects
+                </a>
+            </div>
+
+            <?php if (isset($error)): ?>
+                <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6" role="alert">
+                    <p><?php echo $error; ?></p>
                 </div>
             <?php endif; ?>
-        </div>
 
-        <div class="mb-6">
-            <label class="flex items-center">
-                <input type="checkbox" name="is_featured" value="1" <?php echo !empty($project['is_featured']) ? 'checked' : ''; ?> class="form-checkbox h-5 w-5 text-blue-600">
-                <span class="ml-2 text-gray-700">Feature this project on the homepage</span>
-            </label>
-        </div>
+            <form action="project-edit.php?id=<?php echo $id; ?>" method="POST" enctype="multipart/form-data" class="bg-white shadow-lg rounded-lg p-8">
+                <input type="hidden" name="id" value="<?php echo htmlspecialchars($project['id']); ?>">
 
-        <div class="flex items-center justify-end">
-            <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded focus:outline-none focus:shadow-outline transition duration-300">
-                <i class="fas fa-save mr-2"></i>Save Project
-            </button>
-        </div>
-    </form>
-</div>
+                <div class="mb-6">
+                    <label for="title" class="block text-gray-700 text-sm font-bold mb-2">Title</label>
+                    <input type="text" id="title" name="title" value="<?php echo htmlspecialchars($project['title']); ?>" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                </div>
 
-<?php include 'footer.php'; ?>
+                <div class="mb-6">
+                    <label for="slug" class="block text-gray-700 text-sm font-bold mb-2">Slug</label>
+                    <input type="text" id="slug" name="slug" value="<?php echo htmlspecialchars($project['slug']); ?>" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                    <p class="text-gray-600 text-xs italic mt-2">Leave blank to auto-generate from title.</p>
+                </div>
+
+                <div class="mb-6">
+                    <label for="description" class="block text-gray-700 text-sm font-bold mb-2">Description</label>
+                    <textarea id="description" name="description" rows="4" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"><?php echo htmlspecialchars($project['description']); ?></textarea>
+                </div>
+
+                <div class="mb-6">
+                    <label for="challenge" class="block text-gray-700 text-sm font-bold mb-2">Challenge</label>
+                    <textarea id="challenge" name="challenge" rows="6" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"><?php echo htmlspecialchars($project['challenge']); ?></textarea>
+                </div>
+
+                <div class="mb-6">
+                    <label for="solution" class="block text-gray-700 text-sm font-bold mb-2">Solution</label>
+                    <textarea id="solution" name="solution" rows="6" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"><?php echo htmlspecialchars($project['solution']); ?></textarea>
+                </div>
+
+                <div class="mb-6">
+                    <label for="results" class="block text-gray-700 text-sm font-bold mb-2">Results</label>
+                    <textarea id="results" name="results" rows="6" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"><?php echo htmlspecialchars($project['results']); ?></textarea>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="mb-6">
+                        <label for="client_name" class="block text-gray-700 text-sm font-bold mb-2">Client Name</label>
+                        <input type="text" id="client_name" name="client_name" value="<?php echo htmlspecialchars($project['client_name']); ?>" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                    </div>
+                    <div class="mb-6">
+                        <label for="service_category" class="block text-gray-700 text-sm font-bold mb-2">Service Category</label>
+                        <select id="service_category" name="service_category" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                            <option value="">Select a category</option>
+                            <?php foreach ($serviceCategories as $key => $label): ?>
+                                <option value="<?php echo htmlspecialchars($key); ?>" <?php echo ($project['service_category'] === $key) ? 'selected' : ''; ?>>
+                                    <?php echo htmlspecialchars($label); ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="mb-6">
+                    <label for="thumbnail_file" class="block text-gray-700 text-sm font-bold mb-2">Thumbnail Image</label>
+                    <input type="file" id="thumbnail_file" name="thumbnail_file" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                    <input type="hidden" name="existing_thumbnail" value="<?php echo htmlspecialchars($project['thumbnail']); ?>">
+                    <?php if (!empty($project['thumbnail'])): ?>
+                        <div class="mt-4">
+                            <p class="text-gray-600">Current Thumbnail:</p>
+                            <img src="../<?php echo htmlspecialchars($project['thumbnail']); ?>" alt="Current project thumbnail" class="w-48 h-auto rounded mt-2">
+                        </div>
+                    <?php endif; ?>
+                </div>
+
+                <div class="mb-6">
+                    <label class="flex items-center">
+                        <input type="checkbox" name="featured" value="1" <?php echo !empty($project['featured']) ? 'checked' : ''; ?> class="form-checkbox h-5 w-5 text-blue-600">
+                        <span class="ml-2 text-gray-700">Feature this project on the homepage</span>
+                    </label>
+                </div>
+
+                <div class="flex items-center justify-end">
+                    <button type="submit" class="bg-primary-blue hover:bg-blue-700 text-white font-bold py-2 px-6 rounded focus:outline-none focus:shadow-outline transition duration-300">
+                        <i class="fas fa-save mr-2"></i>Save Project
+                    </button>
+                </div>
+            </form>
+        </main>
+    </div>
+</body>
+
+</html>

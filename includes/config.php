@@ -14,6 +14,17 @@ define('CONTACT_EMAIL', 'info@appbuildltd.com');
 define('PHONE_NUMBER', '+1 (555) 123-4567');
 define('BUSINESS_HOURS', 'Monday - Friday: 9:00 AM - 6:00 PM');
 define('ADDRESS', '123 Business Street, Suite 100, City, State 12345');
+// environment
+define('ENVIRONMENT', 'development'); // change to 'production' in live environment
+
+// Error reporting based on environment
+if (ENVIRONMENT === 'production') {
+    error_reporting(0);
+    ini_set('display_errors', '0');
+} else {
+    error_reporting(E_ALL);
+    ini_set('display_errors', '1');
+}
 
 // Brand Colors
 define('PRIMARY_BLUE', '#265E9A');

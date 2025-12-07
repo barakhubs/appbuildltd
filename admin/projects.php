@@ -167,7 +167,7 @@ $pageTitle = 'Manage Projects';
                                                 <h3 class="text-sm font-medium text-gray-900">
                                                     <?php echo htmlspecialchars($project['title']); ?>
                                                 </h3>
-                                                <?php if ($project['excerpt']): ?>
+                                                <?php if (!empty($project['excerpt'])): ?>
                                                     <p class="text-sm text-gray-500 mt-1">
                                                         <?php echo truncateText(strip_tags($project['excerpt']), 100); ?>
                                                     </p>
@@ -191,7 +191,7 @@ $pageTitle = 'Manage Projects';
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
                                             <?php if ($project['status'] === 'published'): ?>
-                                                <a href="<?php echo SITE_URL; ?>/project.php?slug=<?php echo $project['slug']; ?>"
+                                                <a href="<?php echo SITE_URL; ?>/project-detail.php?slug=<?php echo $project['slug']; ?>"
                                                     target="_blank" class="text-blue-600 hover:text-blue-900">
                                                     <i class="fas fa-eye"></i>
                                                 </a>
