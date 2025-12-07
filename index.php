@@ -12,7 +12,10 @@ $serviceCategories = getServiceCategories();
 
 <!-- Hero Section -->
 <section class="relative bg-primary-blue text-white overflow-hidden">
-    <div class="absolute inset-0 bg-black opacity-40"></div>
+    <!-- Background Image with Overlay -->
+    <div class="absolute inset-0 bg-cover bg-center bg-no-repeat" style="background-image: url('<?php echo SITE_URL; ?>/assets/images/hero.jpeg');"></div>
+    <div class="absolute inset-0 bg-gradient-to-r from-primary-blue/90 to-blue-900/80"></div>
+
     <div class="container mx-auto px-4 relative z-10">
         <div class="min-h-screen flex items-center justify-center">
             <div class="max-w-4xl text-center">
@@ -43,7 +46,7 @@ $serviceCategories = getServiceCategories();
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div class="wow-fade-in-left">
                 <div class="relative">
-                    <img src="<?php echo SITE_URL; ?>/assets/images/about-us.jpg" alt="Our Team" class="rounded-lg shadow-2xl w-full">
+                    <img src="<?php echo SITE_URL; ?>/assets/images/about-us.jpeg" alt="Our Team" class="rounded-lg shadow-2xl w-full">
                     <div class="absolute -bottom-4 -right-4 bg-primary-blue text-white p-6 rounded-lg shadow-lg max-w-xs">
                         <p class="text-lg font-semibold">"The only way to do great work is to love what you do."</p>
                         <p class="text-sm text-blue-200 mt-2">- Steve Jobs</p>
@@ -246,85 +249,97 @@ $serviceCategories = getServiceCategories();
     </div>
 </section>
 
-</div>
-
-<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-    <div class="bg-white bg-opacity-10 rounded-lg p-6 backdrop-blur-sm">
-        <div class="flex items-center mb-4">
-            <div class="flex text-yellow-400 text-xl">
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-            </div>
+<!-- Testimonials Section -->
+<section class="py-20 bg-gradient-to-br from-gray-50 to-blue-50">
+    <div class="container mx-auto px-4">
+        <div class="text-center mb-16">
+            <h2 class="text-4xl font-bold text-gray-800 mb-4">What Our Clients Say</h2>
+            <p class="text-lg text-gray-600 max-w-3xl mx-auto">
+                Don't just take our word for it - hear from some of our satisfied clients.
+            </p>
         </div>
-        <p class="text-blue-100 mb-4 italic">
-            "AppBuild Ltd. transformed our data management processes completely. The efficiency gains
-            have been remarkable, and their team's expertise is unmatched."
-        </p>
-        <div class="flex items-center">
-            <div class="w-10 h-10 bg-blue-300 rounded-full flex items-center justify-center text-primary-blue font-bold">
-                JS
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="bg-white rounded-xl shadow-xl p-8 transform hover:-translate-y-2 transition-all duration-300 wow-fade-in-up relative">
+                <div class="absolute -top-4 -left-4 bg-primary-blue text-white w-12 h-12 rounded-full flex items-center justify-center text-2xl">
+                    <i class="fas fa-quote-left"></i>
+                </div>
+                <div class="flex text-yellow-400 text-lg mb-4">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                </div>
+                <p class="text-gray-700 mb-6 text-lg leading-relaxed italic">
+                    "AppBuild Ltd. transformed our data management processes completely. The efficiency gains
+                    have been remarkable, and their team's expertise is unmatched."
+                </p>
+                <div class="flex items-center pt-4 border-t border-gray-200">
+                    <div class="w-14 h-14 bg-gradient-to-br from-primary-blue to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg">
+                        JS
+                    </div>
+                    <div class="ml-4">
+                        <h4 class="font-bold text-gray-800 text-lg">John Smith</h4>
+                        <p class="text-gray-500 text-sm">CTO, Tech Solutions Inc.</p>
+                    </div>
+                </div>
             </div>
-            <div class="ml-3">
-                <h4 class="font-semibold">John Smith</h4>
-                <p class="text-blue-200 text-sm">CTO, Tech Solutions Inc.</p>
+
+            <div class="bg-white rounded-xl shadow-xl p-8 transform hover:-translate-y-2 transition-all duration-300 wow-fade-in-up relative" data-wow-delay="0.1s">
+                <div class="absolute -top-4 -left-4 bg-primary-blue text-white w-12 h-12 rounded-full flex items-center justify-center text-2xl">
+                    <i class="fas fa-quote-left"></i>
+                </div>
+                <div class="flex text-yellow-400 text-lg mb-4">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                </div>
+                <p class="text-gray-700 mb-6 text-lg leading-relaxed italic">
+                    "Exceptional project management and attention to detail. They delivered our custom
+                    application on time and exceeded our expectations."
+                </p>
+                <div class="flex items-center pt-4 border-t border-gray-200">
+                    <div class="w-14 h-14 bg-gradient-to-br from-primary-blue to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg">
+                        MJ
+                    </div>
+                    <div class="ml-4">
+                        <h4 class="font-bold text-gray-800 text-lg">Maria Johnson</h4>
+                        <p class="text-gray-500 text-sm">Operations Manager, Global Corp</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-xl p-8 transform hover:-translate-y-2 transition-all duration-300 wow-fade-in-up relative" data-wow-delay="0.2s">
+                <div class="absolute -top-4 -left-4 bg-primary-blue text-white w-12 h-12 rounded-full flex items-center justify-center text-2xl">
+                    <i class="fas fa-quote-left"></i>
+                </div>
+                <div class="flex text-yellow-400 text-lg mb-4">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                </div>
+                <p class="text-gray-700 mb-6 text-lg leading-relaxed italic">
+                    "Their cost management solutions helped us reduce operational expenses by 30%
+                    while improving overall efficiency. Outstanding results!"
+                </p>
+                <div class="flex items-center pt-4 border-t border-gray-200">
+                    <div class="w-14 h-14 bg-gradient-to-br from-primary-blue to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg">
+                        RB
+                    </div>
+                    <div class="ml-4">
+                        <h4 class="font-bold text-gray-800 text-lg">Robert Brown</h4>
+                        <p class="text-gray-500 text-sm">Finance Director, Enterprise Ltd</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-
-    <div class="bg-white bg-opacity-10 rounded-lg p-6 backdrop-blur-sm">
-        <div class="flex items-center mb-4">
-            <div class="flex text-yellow-400 text-xl">
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-            </div>
-        </div>
-        <p class="text-blue-100 mb-4 italic">
-            "Exceptional project management and attention to detail. They delivered our custom
-            application on time and exceeded our expectations."
-        </p>
-        <div class="flex items-center">
-            <div class="w-10 h-10 bg-blue-300 rounded-full flex items-center justify-center text-primary-blue font-bold">
-                MJ
-            </div>
-            <div class="ml-3">
-                <h4 class="font-semibold">Maria Johnson</h4>
-                <p class="text-blue-200 text-sm">Operations Manager, Global Corp</p>
-            </div>
-        </div>
-    </div>
-
-    <div class="bg-white bg-opacity-10 rounded-lg p-6 backdrop-blur-sm">
-        <div class="flex items-center mb-4">
-            <div class="flex text-yellow-400 text-xl">
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-            </div>
-        </div>
-        <p class="text-blue-100 mb-4 italic">
-            "Their cost management solutions helped us reduce operational expenses by 30%
-            while improving overall efficiency. Outstanding results!"
-        </p>
-        <div class="flex items-center">
-            <div class="w-10 h-10 bg-blue-300 rounded-full flex items-center justify-center text-primary-blue font-bold">
-                RB
-            </div>
-            <div class="ml-3">
-                <h4 class="font-semibold">Robert Brown</h4>
-                <p class="text-blue-200 text-sm">Finance Director, Enterprise Ltd</p>
-            </div>
-        </div>
-    </div>
-</div>
-</div>
+</section>
 </section>
 
 <!-- Recent Blog Posts -->

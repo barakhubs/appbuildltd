@@ -215,7 +215,7 @@ $categories = getBlogCategories();
 
                         <div>
                             <label for="meta_description" class="block text-gray-700 text-sm font-bold mb-2">Meta Description</label>
-                            <textarea id="meta_description" name="meta_description" rows="2" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"><?php echo htmlspecialchars($post['meta_description']); ?></textarea>
+                            <textarea id="meta_description" name="meta_description" rows="2" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"><?php echo htmlspecialchars($post['meta_description'] ?? ''); ?></textarea>
                             <p class="text-gray-600 text-xs italic mt-2">For SEO purposes (155 characters max).</p>
                         </div>
                     </div>
