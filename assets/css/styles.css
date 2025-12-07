@@ -1,0 +1,308 @@
+/* Custom CSS for AppBuild Ltd. Website */
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #265e9a;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #1d4a7a;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Hero section background gradients */
+.hero-gradient {
+  background: linear-gradient(135deg, #265e9a 0%, #1d4a7a 100%);
+}
+
+.hero-overlay {
+  background: linear-gradient(rgba(38, 94, 154, 0.8), rgba(29, 74, 122, 0.9));
+}
+
+/* Card hover effects */
+.card-hover {
+  transition: all 0.3s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* Button animations */
+.btn-primary {
+  background: #f54927;
+  transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+  background: #d63916;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(245, 73, 39, 0.3);
+}
+
+.btn-secondary {
+  background: #265e9a;
+  transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+  background: #1d4a7a;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(38, 94, 154, 0.3);
+}
+
+/* Loading animation */
+.loading {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #265e9a;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Form focus states */
+.form-input:focus {
+  border-color: #265e9a;
+  box-shadow: 0 0 0 3px rgba(38, 94, 154, 0.1);
+}
+
+/* Service icons */
+.service-icon {
+  font-size: 3rem;
+  color: #265e9a;
+  margin-bottom: 1rem;
+  transition: all 0.3s ease;
+}
+
+.service-icon:hover {
+  color: #f54927;
+  transform: scale(1.1);
+}
+
+/* Project grid masonry effect */
+.project-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  align-items: start;
+}
+
+/* Testimonial styles */
+.testimonial-card {
+  background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+  border-left: 4px solid #265e9a;
+}
+
+/* Blog post content styles */
+.blog-content h1,
+.blog-content h2,
+.blog-content h3 {
+  color: #265e9a;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+
+.blog-content h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+}
+
+.blog-content h2 {
+  font-size: 2rem;
+  font-weight: 600;
+}
+
+.blog-content h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.blog-content p {
+  margin-bottom: 1rem;
+  line-height: 1.7;
+}
+
+.blog-content ul,
+.blog-content ol {
+  margin: 1rem 0;
+  padding-left: 2rem;
+}
+
+.blog-content blockquote {
+  border-left: 4px solid #265e9a;
+  padding-left: 1rem;
+  margin: 2rem 0;
+  font-style: italic;
+  color: #666;
+}
+
+/* Mobile menu animation */
+#mobile-menu {
+  transition: all 0.3s ease;
+}
+
+#mobile-menu.show {
+  display: block;
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Sticky header shadow */
+.header-shadow {
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Image lazy loading placeholder */
+.img-placeholder {
+  background: linear-gradient(45deg, #f0f0f0 25%, transparent 25%),
+    linear-gradient(-45deg, #f0f0f0 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #f0f0f0 75%),
+    linear-gradient(-45deg, transparent 75%, #f0f0f0 75%);
+  background-size: 20px 20px;
+  background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+  animation: loading-animation 1.5s linear infinite;
+}
+
+@keyframes loading-animation {
+  0% {
+    background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+  }
+  100% {
+    background-position: 20px 20px, 20px 30px, 30px 10px, 10px 20px;
+  }
+}
+
+/* Parallax effect for hero sections */
+.parallax {
+  background-attachment: fixed;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+/* Custom pagination */
+.pagination a {
+  transition: all 0.3s ease;
+}
+
+.pagination a:hover {
+  background-color: #265e9a;
+  color: white;
+}
+
+.pagination .active {
+  background-color: #f54927;
+  color: white;
+}
+
+/* Admin panel styles */
+.admin-sidebar {
+  background: linear-gradient(180deg, #265e9a 0%, #1d4a7a 100%);
+}
+
+.admin-card {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.admin-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+/* Status badges */
+.status-published {
+  background-color: #10b981;
+  color: white;
+}
+
+.status-draft {
+  background-color: #f59e0b;
+  color: white;
+}
+
+.status-archived {
+  background-color: #6b7280;
+  color: white;
+}
+
+/* Responsive utilities */
+@media (max-width: 768px) {
+  .hero-gradient h1 {
+    font-size: 2rem;
+  }
+
+  .service-icon {
+    font-size: 2.5rem;
+  }
+
+  .project-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .blog-content h1 {
+    font-size: 2rem;
+  }
+
+  .blog-content h2 {
+    font-size: 1.75rem;
+  }
+
+  .blog-content h3 {
+    font-size: 1.5rem;
+  }
+}
+
+/* Print styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  body {
+    font-size: 12pt;
+    line-height: 1.4;
+  }
+
+  h1,
+  h2,
+  h3 {
+    page-break-after: avoid;
+  }
+}
