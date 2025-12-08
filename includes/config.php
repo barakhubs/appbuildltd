@@ -35,6 +35,7 @@ function loadEnv($path)
 loadEnv(__DIR__ . '/../.env');
 
 // Database Configuration
+define('DB_TYPE', $_ENV['DB_TYPE'] ?? 'pgsql'); // pgsql or mysql
 define('DB_HOST', $_ENV['DB_HOST'] ?? 'localhost');
 define('DB_PORT', $_ENV['DB_PORT'] ?? '5432');
 define('DB_NAME', $_ENV['DB_NAME'] ?? 'appbuild_website');
@@ -75,8 +76,16 @@ class Database
     private function __construct()
     {
         try {
+            // Build DSN based on database type
+            if (DB_TYPE === 'mysql') {
+                $dsn = "mysql:host=" . DB_HOST . ";port=" . DB_PORT . ";dbname=" . DB_NAME . ";charset=utf8mb4";
+            } else {
+                // Default to PostgreSQL
+                $dsn = "pgsql:host=" . DB_HOST . ";port=" . DB_PORT . ";dbname=" . DB_NAME . ";options='--client_encoding=UTF8'";
+            }
+
             $this->connection = new PDO(
-                "pgsql:host=" . DB_HOST . ";port=" . DB_PORT . ";dbname=" . DB_NAME . ";options='--client_encoding=UTF8'",
+                $dsn,
                 DB_USER,
                 DB_PASS,
                 [
