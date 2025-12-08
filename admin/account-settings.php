@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Update username and email
         $newUsername = trim($_POST['username']);
         $newEmail = trim($_POST['email']);
-        
+
         if (empty($newUsername)) {
             $message = 'Username cannot be empty.';
             $messageType = 'error';
@@ -33,12 +33,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $currentPassword = $_POST['current_password'];
         $newPassword = $_POST['new_password'];
         $confirmPassword = $_POST['confirm_password'];
-        
+
         // Verify current password
         $stmt = $db->prepare("SELECT password_hash FROM admin_users WHERE id = ?");
         $stmt->execute([$_SESSION['admin_user_id']]);
         $admin = $stmt->fetch();
-        
+
         if (!password_verify($currentPassword, $admin['password_hash'])) {
             $message = 'Current password is incorrect.';
             $messageType = 'error';
@@ -187,9 +187,9 @@ $pageTitle = 'Account Settings';
                                 <label for="username" class="block text-sm font-medium text-gray-700 mb-1">
                                     Username
                                 </label>
-                                <input type="text" 
-                                    id="username" 
-                                    name="username" 
+                                <input type="text"
+                                    id="username"
+                                    name="username"
                                     value="<?php echo htmlspecialchars($adminData['username']); ?>"
                                     required
                                     class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue">
@@ -198,15 +198,15 @@ $pageTitle = 'Account Settings';
                                 <label for="email" class="block text-sm font-medium text-gray-700 mb-1">
                                     Email Address
                                 </label>
-                                <input type="email" 
-                                    id="email" 
-                                    name="email" 
+                                <input type="email"
+                                    id="email"
+                                    name="email"
                                     value="<?php echo htmlspecialchars($adminData['email'] ?? ''); ?>"
                                     required
                                     class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue">
                             </div>
                             <div class="pt-4">
-                                <button type="submit" 
+                                <button type="submit"
                                     name="update_profile"
                                     class="w-full bg-primary-blue text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors font-medium">
                                     <i class="fas fa-save mr-2"></i>Update Profile
@@ -230,9 +230,9 @@ $pageTitle = 'Account Settings';
                                 <label for="current_password" class="block text-sm font-medium text-gray-700 mb-1">
                                     Current Password
                                 </label>
-                                <input type="password" 
-                                    id="current_password" 
-                                    name="current_password" 
+                                <input type="password"
+                                    id="current_password"
+                                    name="current_password"
                                     required
                                     class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue">
                             </div>
@@ -240,9 +240,9 @@ $pageTitle = 'Account Settings';
                                 <label for="new_password" class="block text-sm font-medium text-gray-700 mb-1">
                                     New Password
                                 </label>
-                                <input type="password" 
-                                    id="new_password" 
-                                    name="new_password" 
+                                <input type="password"
+                                    id="new_password"
+                                    name="new_password"
                                     required
                                     minlength="8"
                                     class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue">
@@ -252,15 +252,15 @@ $pageTitle = 'Account Settings';
                                 <label for="confirm_password" class="block text-sm font-medium text-gray-700 mb-1">
                                     Confirm New Password
                                 </label>
-                                <input type="password" 
-                                    id="confirm_password" 
-                                    name="confirm_password" 
+                                <input type="password"
+                                    id="confirm_password"
+                                    name="confirm_password"
                                     required
                                     minlength="8"
                                     class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue">
                             </div>
                             <div class="pt-4">
-                                <button type="submit" 
+                                <button type="submit"
                                     name="change_password"
                                     class="w-full bg-primary-blue text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors font-medium">
                                     <i class="fas fa-key mr-2"></i>Change Password
@@ -304,7 +304,7 @@ $pageTitle = 'Account Settings';
         document.querySelector('form[name="change_password"]')?.addEventListener('submit', function(e) {
             const newPassword = document.getElementById('new_password').value;
             const confirmPassword = document.getElementById('confirm_password').value;
-            
+
             if (newPassword !== confirmPassword) {
                 e.preventDefault();
                 alert('New password and confirmation do not match.');

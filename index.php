@@ -242,8 +242,9 @@ $serviceCategories = getServiceCategories();
             Let's discuss how our expert solutions can help you achieve your business goals.
         </p>
         <div class="wow-fade-in-up">
-            <a href="<?php echo SITE_URL; ?>/contact" class="bg-secondary-red text-white px-10 py-4 rounded-full text-lg font-bold hover:bg-red-600 transition-all transform hover:scale-105 shadow-lg">
-                Get Your Free Consultation Today
+            <a href="<?php echo SITE_URL; ?>/contact" class="bg-secondary-red text-white px-6 sm:px-10 py-3 sm:py-4 rounded-full text-base sm:text-lg font-bold hover:bg-red-600 transition-all transform hover:scale-105 shadow-lg inline-block">
+                <span class="hidden sm:inline">Get Your Free Consultation Today</span>
+                <span class="sm:hidden">Get Free Consultation</span>
             </a>
         </div>
     </div>
