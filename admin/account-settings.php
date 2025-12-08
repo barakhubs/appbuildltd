@@ -35,11 +35,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $confirmPassword = $_POST['confirm_password'];
 
         // Verify current password
-        $stmt = $db->prepare("SELECT password_hash FROM admin_users WHERE id = ?");
+        $stmt = $db->prepare("SELECT password FROM admin_users WHERE id = ?");
         $stmt->execute([$_SESSION['admin_user_id']]);
         $admin = $stmt->fetch();
 
-        if (!password_verify($currentPassword, $admin['password_hash'])) {
+        if (!password_verify($currentPassword, $admin['password'])) {
             $message = 'Current password is incorrect.';
             $messageType = 'error';
         } elseif (strlen($newPassword) < 8) {
@@ -50,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $messageType = 'error';
         } else {
             $passwordHash = password_hash($newPassword, PASSWORD_DEFAULT);
-            $stmt = $db->prepare("UPDATE admin_users SET password_hash = ? WHERE id = ?");
+            $stmt = $db->prepare("UPDATE admin_users SET password = ? WHERE id = ?");
             $stmt->execute([$passwordHash, $_SESSION['admin_user_id']]);
             $message = 'Password changed successfully!';
             $messageType = 'success';
