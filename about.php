@@ -44,11 +44,11 @@ require_once 'includes/header.php';
                     </p>
                     <div class="flex items-center space-x-8">
                         <div class="text-center">
-                            <div class="text-3xl font-bold text-primary-blue">2013</div>
+                            <div class="text-3xl font-bold text-primary-blue">2025</div>
                             <div class="text-gray-600">Founded</div>
                         </div>
                         <div class="text-center">
-                            <div class="text-3xl font-bold text-primary-blue">500+</div>
+                            <div class="text-3xl font-bold text-primary-blue">5+</div>
                             <div class="text-gray-600">Projects</div>
                         </div>
                         <div class="text-center">

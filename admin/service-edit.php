@@ -39,7 +39,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $description = $_POST['description'] ?? '';
     $benefits = $_POST['benefits'] ?? '';
     $use_cases = $_POST['use_cases'] ?? '';
-    $featured_image = $_POST['featured_image'] ?? '';
+
+    // Image handling
+    $featured_image = $_POST['existing_featured_image'] ?? '';
+    if (isset($_FILES['featured_image']) && $_FILES['featured_image']['error'] == UPLOAD_ERR_OK) {
+        $upload_dir = '../uploads/services/';
+        if (!is_dir($upload_dir)) {
+            mkdir($upload_dir, 0777, true);
+        }
+        $filename = uniqid() . '-' . basename($_FILES['featured_image']['name']);
+        $target_file = $upload_dir . $filename;
+        if (move_uploaded_file($_FILES['featured_image']['tmp_name'], $target_file)) {
+            $featured_image = 'uploads/services/' . $filename;
+        }
+    }
 
     if ($is_new) {
         $sql = "INSERT INTO service_pages (title, service_key, description, benefits, use_cases, featured_image) VALUES (:title, :service_key, :description, :benefits, :use_cases, :featured_image)";
@@ -75,6 +88,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <title><?php echo $pageTitle; ?> - <?php echo SITE_NAME; ?></title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Quill.js -->
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -86,6 +102,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
             }
         }
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const editors = {};
+            const fields = ['description', 'benefits', 'use_cases'];
+
+            fields.forEach(field => {
+                editors[field] = new Quill(`#${field}-editor`, {
+                    theme: 'snow',
+                    modules: {
+                        toolbar: [
+                            ['bold', 'italic'],
+                            [{
+                                'list': 'ordered'
+                            }, {
+                                'list': 'bullet'
+                            }],
+                            ['link']
+                        ]
+                    }
+                });
+
+                const textarea = document.getElementById(field);
+                if (textarea.value) {
+                    editors[field].root.innerHTML = textarea.value;
+                }
+            });
+
+            const form = document.querySelector('form');
+            form.addEventListener('submit', function() {
+                fields.forEach(field => {
+                    document.getElementById(field).value = editors[field].root.innerHTML;
+                });
+            });
+        });
     </script>
 </head>
 
@@ -137,6 +188,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <i class="fas fa-envelope mr-3"></i>Contact Submissions
                         </a>
                     </li>
+                    <li class="pt-4 border-t border-blue-600">
+                        <a href="account-settings.php" class="flex items-center p-3 rounded-lg hover:bg-blue-700 transition-colors">
+                            <i class="fas fa-user-cog mr-3"></i>Account Settings
+                        </a>
+                    </li>
                 </ul>
             </nav>
         </aside>
@@ -160,7 +216,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
             <?php endif; ?>
 
-            <form action="service-edit.php?id=<?php echo $id; ?>" method="POST" class="bg-white shadow-lg rounded-lg p-8">
+            <form action="service-edit.php?id=<?php echo $id; ?>" method="POST" enctype="multipart/form-data" class="bg-white shadow-lg rounded-lg p-8">
                 <input type="hidden" name="id" value="<?php echo htmlspecialchars($service['id']); ?>">
 
                 <div class="mb-6">
@@ -175,23 +231,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
 
                 <div class="mb-6">
-                    <label for="featured_image" class="block text-gray-700 text-sm font-bold mb-2">Featured Image URL</label>
-                    <input type="text" id="featured_image" name="featured_image" value="<?php echo htmlspecialchars($service['featured_image']); ?>" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                    <label for="featured_image" class="block text-gray-700 text-sm font-bold mb-2">Featured Image</label>
+                    <input type="file" id="featured_image" name="featured_image" accept="image/*" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                    <input type="hidden" name="existing_featured_image" value="<?php echo htmlspecialchars($service['featured_image']); ?>">
+                    <?php if (!empty($service['featured_image'])): ?>
+                        <div class="mt-4">
+                            <p class="text-gray-600 text-xs mb-2">Current Image:</p>
+                            <img src="../<?php echo htmlspecialchars($service['featured_image']); ?>" alt="Current service image" class="w-48 h-auto rounded">
+                        </div>
+                    <?php endif; ?>
                 </div>
 
                 <div class="mb-6">
                     <label for="description" class="block text-gray-700 text-sm font-bold mb-2">Description</label>
-                    <textarea id="description" name="description" rows="4" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"><?php echo htmlspecialchars($service['description']); ?></textarea>
+                    <div id="description-editor" style="height: 200px; background: white;"></div>
+                    <textarea id="description" name="description" class="hidden"><?php echo htmlspecialchars($service['description']); ?></textarea>
                 </div>
 
                 <div class="mb-6">
                     <label for="benefits" class="block text-gray-700 text-sm font-bold mb-2">Benefits</label>
-                    <textarea id="benefits" name="benefits" rows="6" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"><?php echo htmlspecialchars($service['benefits']); ?></textarea>
+                    <div id="benefits-editor" style="height: 250px; background: white;"></div>
+                    <textarea id="benefits" name="benefits" class="hidden"><?php echo htmlspecialchars($service['benefits']); ?></textarea>
                 </div>
 
                 <div class="mb-6">
                     <label for="use_cases" class="block text-gray-700 text-sm font-bold mb-2">Use Cases</label>
-                    <textarea id="use_cases" name="use_cases" rows="6" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"><?php echo htmlspecialchars($service['use_cases']); ?></textarea>
+                    <div id="use_cases-editor" style="height: 250px; background: white;"></div>
+                    <textarea id="use_cases" name="use_cases" class="hidden"><?php echo htmlspecialchars($service['use_cases']); ?></textarea>
                 </div>
 
                 <div class="flex items-center justify-end">

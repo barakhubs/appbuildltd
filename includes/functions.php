@@ -248,6 +248,20 @@ function getImageUrl($imagePath, $default = 'placeholder.jpg')
     return SITE_URL . '/assets/images/' . $imagePath;
 }
 
+function getUploadedImageUrl($imagePath, $default = 'placeholder.jpg')
+{
+    if (empty($imagePath)) {
+        return SITE_URL . '/assets/images/' . $default;
+    }
+
+    // If it's already a full URL, return as is
+    if (strpos($imagePath, 'http') === 0) {
+        return $imagePath;
+    }
+
+    return SITE_URL . '/' . $imagePath;
+}
+
 // Validation functions
 function validateEmail($email)
 {

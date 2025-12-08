@@ -108,6 +108,11 @@ $pageTitle = 'Admin Dashboard';
                             <?php endif; ?>
                         </a>
                     </li>
+                    <li class="pt-4 border-t border-blue-600">
+                        <a href="account-settings.php" class="flex items-center p-3 rounded-lg hover:bg-blue-700 transition-colors">
+                            <i class="fas fa-user-cog mr-3"></i>Account Settings
+                        </a>
+                    </li>
                 </ul>
             </nav>
         </aside>

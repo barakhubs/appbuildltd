@@ -101,6 +101,9 @@ $categories = getBlogCategories();
     <title><?php echo $pageTitle; ?> - <?php echo SITE_NAME; ?></title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Quill.js -->
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -112,6 +115,71 @@ $categories = getBlogCategories();
                 }
             }
         }
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Quill editor for excerpt
+            const excerptEditor = new Quill('#excerpt-editor', {
+                theme: 'snow',
+                modules: {
+                    toolbar: [
+                        ['bold', 'italic'],
+                        [{
+                            'list': 'ordered'
+                        }, {
+                            'list': 'bullet'
+                        }],
+                        ['link']
+                    ]
+                }
+            });
+
+            // Quill editor for content
+            const contentEditor = new Quill('#content-editor', {
+                theme: 'snow',
+                modules: {
+                    toolbar: [
+                        [{
+                            'header': [1, 2, 3, false]
+                        }],
+                        ['bold', 'italic', 'underline', 'strike'],
+                        [{
+                            'color': []
+                        }, {
+                            'background': []
+                        }],
+                        [{
+                            'list': 'ordered'
+                        }, {
+                            'list': 'bullet'
+                        }],
+                        [{
+                            'align': []
+                        }],
+                        ['link', 'image'],
+                        ['clean']
+                    ]
+                }
+            });
+
+            // Set initial content
+            const excerptTextarea = document.getElementById('excerpt');
+            const contentTextarea = document.getElementById('content');
+
+            if (excerptTextarea.value) {
+                excerptEditor.root.innerHTML = excerptTextarea.value;
+            }
+            if (contentTextarea.value) {
+                contentEditor.root.innerHTML = contentTextarea.value;
+            }
+
+            // Update hidden textareas on form submit
+            const form = excerptTextarea.closest('form');
+            form.addEventListener('submit', function() {
+                excerptTextarea.value = excerptEditor.root.innerHTML;
+                contentTextarea.value = contentEditor.root.innerHTML;
+            });
+        });
     </script>
 </head>
 
@@ -163,6 +231,11 @@ $categories = getBlogCategories();
                             <i class="fas fa-envelope mr-3"></i>Contact Submissions
                         </a>
                     </li>
+                    <li class="pt-4 border-t border-blue-600">
+                        <a href="account-settings.php" class="flex items-center p-3 rounded-lg hover:bg-blue-700 transition-colors">
+                            <i class="fas fa-user-cog mr-3"></i>Account Settings
+                        </a>
+                    </li>
                 </ul>
             </nav>
         </aside>
@@ -204,13 +277,15 @@ $categories = getBlogCategories();
 
                         <div>
                             <label for="excerpt" class="block text-gray-700 text-sm font-bold mb-2">Excerpt</label>
-                            <textarea id="excerpt" name="excerpt" rows="3" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"><?php echo htmlspecialchars($post['excerpt']); ?></textarea>
+                            <div id="excerpt-editor" style="height: 150px; background: white;"></div>
+                            <textarea id="excerpt" name="excerpt" class="hidden"><?php echo htmlspecialchars($post['excerpt']); ?></textarea>
                             <p class="text-gray-600 text-xs italic mt-2">A brief summary of your post.</p>
                         </div>
 
                         <div>
                             <label for="content" class="block text-gray-700 text-sm font-bold mb-2">Content *</label>
-                            <textarea id="content" name="content" rows="15" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required><?php echo htmlspecialchars($post['content']); ?></textarea>
+                            <div id="content-editor" style="height: 400px; background: white;"></div>
+                            <textarea id="content" name="content" class="hidden" required><?php echo htmlspecialchars($post['content']); ?></textarea>
                         </div>
 
                         <div>

@@ -57,7 +57,7 @@ $relatedProjects = getProjects(3, $serviceName);
                 <div class="mb-8">
                     <div class="h-64 md:h-80 bg-gradient-to-br from-primary-blue to-blue-600 rounded-lg flex items-center justify-center">
                         <?php if ($serviceData['featured_image']): ?>
-                            <img src="<?php echo getImageUrl('services/' . $serviceData['featured_image']); ?>"
+                            <img src="<?php echo getUploadedImageUrl($serviceData['featured_image']); ?>"
                                 alt="<?php echo htmlspecialchars($serviceData['title']); ?>"
                                 class="w-full h-full object-cover rounded-lg">
                         <?php else: ?>
@@ -120,9 +120,9 @@ $relatedProjects = getProjects(3, $serviceName);
                 <div class="mb-8">
                     <h3 class="text-2xl font-bold text-gray-800 mb-6">Common Use Cases</h3>
                     <div class="bg-gray-50 p-6 rounded-lg">
-                        <p class="text-gray-700 leading-relaxed">
-                            <?php echo nl2br(htmlspecialchars($serviceData['use_cases'])); ?>
-                        </p>
+                        <div class="text-gray-700 leading-relaxed prose max-w-none">
+                            <?php echo $serviceData['use_cases']; ?>
+                        </div>
                     </div>
                 </div>
             </div>

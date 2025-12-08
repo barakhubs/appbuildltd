@@ -73,9 +73,9 @@ $relatedPosts = array_slice($relatedPosts, 0, 3);
 
             <!-- Excerpt -->
             <?php if ($blogPost['excerpt']): ?>
-                <p class="text-xl text-blue-100 mt-6 leading-relaxed">
-                    <?php echo htmlspecialchars($blogPost['excerpt']); ?>
-                </p>
+                <div class="text-xl text-blue-100 mt-6 leading-relaxed">
+                    <?php echo $blogPost['excerpt']; ?>
+                </div>
             <?php endif; ?>
         </div>
     </div>

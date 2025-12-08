@@ -11,9 +11,9 @@ define('SITE_NAME', 'AppBuild Ltd.');
 define('SITE_URL', 'http://localhost:9000');
 define('ADMIN_EMAIL', 'admin@appbuildltd.com');
 define('CONTACT_EMAIL', 'info@appbuildltd.com');
-define('PHONE_NUMBER', '+1 (555) 123-4567');
+define('PHONE_NUMBER', '+256-783-879681');
 define('BUSINESS_HOURS', 'Monday - Friday: 9:00 AM - 6:00 PM');
-define('ADDRESS', '123 Business Street, Suite 100, City, State 12345');
+define('ADDRESS', '22th Streets, Kampala');
 // environment
 define('ENVIRONMENT', 'development'); // change to 'production' in live environment
 

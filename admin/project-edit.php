@@ -105,6 +105,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <title><?php echo $pageTitle; ?> - <?php echo SITE_NAME; ?></title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Quill.js -->
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -116,6 +119,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
             }
         }
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const editors = {};
+            const fields = ['description', 'challenge', 'solution', 'results'];
+
+            fields.forEach(field => {
+                editors[field] = new Quill(`#${field}-editor`, {
+                    theme: 'snow',
+                    modules: {
+                        toolbar: [
+                            ['bold', 'italic'],
+                            [{
+                                'list': 'ordered'
+                            }, {
+                                'list': 'bullet'
+                            }],
+                            ['link']
+                        ]
+                    }
+                });
+
+                const textarea = document.getElementById(field);
+                if (textarea.value) {
+                    editors[field].root.innerHTML = textarea.value;
+                }
+            });
+
+            const form = document.querySelector('form');
+            form.addEventListener('submit', function() {
+                fields.forEach(field => {
+                    document.getElementById(field).value = editors[field].root.innerHTML;
+                });
+            });
+        });
     </script>
 </head>
 
@@ -167,6 +205,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <i class="fas fa-envelope mr-3"></i>Contact Submissions
                         </a>
                     </li>
+                    <li class="pt-4 border-t border-blue-600">
+                        <a href="account-settings.php" class="flex items-center p-3 rounded-lg hover:bg-blue-700 transition-colors">
+                            <i class="fas fa-user-cog mr-3"></i>Account Settings
+                        </a>
+                    </li>
                 </ul>
             </nav>
         </aside>
@@ -206,22 +249,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 <div class="mb-6">
                     <label for="description" class="block text-gray-700 text-sm font-bold mb-2">Description</label>
-                    <textarea id="description" name="description" rows="4" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"><?php echo htmlspecialchars($project['description']); ?></textarea>
+                    <div id="description-editor" style="height: 200px; background: white;"></div>
+                    <textarea id="description" name="description" class="hidden"><?php echo htmlspecialchars($project['description']); ?></textarea>
                 </div>
 
                 <div class="mb-6">
                     <label for="challenge" class="block text-gray-700 text-sm font-bold mb-2">Challenge</label>
-                    <textarea id="challenge" name="challenge" rows="6" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"><?php echo htmlspecialchars($project['challenge']); ?></textarea>
+                    <div id="challenge-editor" style="height: 250px; background: white;"></div>
+                    <textarea id="challenge" name="challenge" class="hidden"><?php echo htmlspecialchars($project['challenge']); ?></textarea>
                 </div>
 
                 <div class="mb-6">
                     <label for="solution" class="block text-gray-700 text-sm font-bold mb-2">Solution</label>
-                    <textarea id="solution" name="solution" rows="6" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"><?php echo htmlspecialchars($project['solution']); ?></textarea>
+                    <div id="solution-editor" style="height: 250px; background: white;"></div>
+                    <textarea id="solution" name="solution" class="hidden"><?php echo htmlspecialchars($project['solution']); ?></textarea>
                 </div>
 
                 <div class="mb-6">
                     <label for="results" class="block text-gray-700 text-sm font-bold mb-2">Results</label>
-                    <textarea id="results" name="results" rows="6" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"><?php echo htmlspecialchars($project['results']); ?></textarea>
+                    <div id="results-editor" style="height: 250px; background: white;"></div>
+                    <textarea id="results" name="results" class="hidden"><?php echo htmlspecialchars($project['results']); ?></textarea>
                 </div>
 
                 <div class="grid md:grid-cols-2 gap-6">

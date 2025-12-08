@@ -107,6 +107,11 @@ $pageTitle = 'Manage Blog Posts';
                             <i class="fas fa-envelope mr-3"></i>Contact Submissions
                         </a>
                     </li>
+                    <li class="pt-4 border-t border-blue-600">
+                        <a href="account-settings.php" class="flex items-center p-3 rounded-lg hover:bg-blue-700 transition-colors">
+                            <i class="fas fa-user-cog mr-3"></i>Account Settings
+                        </a>
+                    </li>
                 </ul>
             </nav>
         </aside>
@@ -119,7 +124,7 @@ $pageTitle = 'Manage Blog Posts';
                     <h2 class="text-3xl font-bold text-gray-800">Blog Posts</h2>
                     <p class="text-gray-600 mt-2">Manage your blog posts and content.</p>
                 </div>
-                <a href="blog-create.php"
+                <a href="blog-edit.php"
                     class="bg-primary-blue text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors font-semibold">
                     <i class="fas fa-plus mr-2"></i>New Blog Post
                 </a>
@@ -183,7 +188,7 @@ $pageTitle = 'Manage Blog Posts';
                                     <td colspan="5" class="px-6 py-12 text-center text-gray-500">
                                         <i class="fas fa-blog text-4xl mb-4"></i>
                                         <p class="text-lg">No blog posts found.</p>
-                                        <a href="blog-create.php" class="text-primary-blue hover:text-blue-700 font-medium mt-2 inline-block">
+                                        <a href="blog-edit.php" class="text-primary-blue hover:text-blue-700 font-medium mt-2 inline-block">
                                             Create your first blog post
                                         </a>
                                     </td>

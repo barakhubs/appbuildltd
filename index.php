@@ -258,7 +258,7 @@ $serviceCategories = getServiceCategories();
                 Don't just take our word for it - hear from some of our satisfied clients.
             </p>
         </div>
-        
+
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div class="bg-white rounded-xl shadow-xl p-8 transform hover:-translate-y-2 transition-all duration-300 wow-fade-in-up relative">
                 <div class="absolute -top-4 -left-4 bg-primary-blue text-white w-12 h-12 rounded-full flex items-center justify-center text-2xl">
