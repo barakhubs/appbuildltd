@@ -329,11 +329,11 @@ $categories = getBlogCategories();
                             <input type="hidden" name="existing_featured_image" value="<?php echo htmlspecialchars($post['featured_image'] ?? ''); ?>">
 
                             <?php if (!empty($post['featured_image'])): ?>
-                            <div class="mt-4">
-                                <p class="text-gray-600 text-xs mb-2">Current Image:</p>
-                                <img src="../<?php echo htmlspecialchars($post['featured_image']); ?>" alt="Current post image" class="w-full h-auto rounded">
-                            </div>
-                        <?php endif; ?>
+                                <div class="mt-4">
+                                    <p class="text-gray-600 text-xs mb-2">Current Image:</p>
+                                    <img src="../<?php echo htmlspecialchars($post['featured_image']); ?>" alt="Current post image" class="w-full h-auto rounded">
+                                </div>
+                            <?php endif; ?>
                         </div>
 
                         <button type="submit" class="w-full bg-primary-blue hover:bg-blue-700 text-white font-bold py-3 px-6 rounded focus:outline-none focus:shadow-outline transition duration-300">
