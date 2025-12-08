@@ -3,6 +3,7 @@
 function loadEnv($path)
 {
     if (!file_exists($path)) {
+        echo __DIR__ . '/../.env';
         die('.env file not found. Please copy .env.example to .env and configure your settings.');
     }
 
