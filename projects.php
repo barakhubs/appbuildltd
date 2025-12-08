@@ -88,9 +88,9 @@ $serviceCategories = getServiceCategories();
                 <?php foreach ($projects as $project): ?>
                     <div class="filterable-item searchable-item bg-white rounded-lg shadow-lg overflow-hidden card-hover"
                         data-category="<?php echo htmlspecialchars($project['service_category']); ?>">
-                        <div class="h-48 bg-gradient-to-br from-primary-blue to-blue-600 flex items-center justify-center">
+                        <div class="h-56 bg-gradient-to-br from-primary-blue to-blue-600 flex items-center justify-center">
                             <?php if ($project['thumbnail']): ?>
-                                <img src="<?php echo getImageUrl('projects/' . $project['thumbnail']); ?>"
+                                <img src="<?php echo getUploadedImageUrl('uploads/projects/' . $project['thumbnail']); ?>"
                                     alt="<?php echo htmlspecialchars($project['title']); ?>"
                                     class="w-full h-full object-cover">
                             <?php else: ?>

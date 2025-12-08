@@ -171,7 +171,7 @@ $serviceCategories = getServiceCategories();
                 <?php foreach ($featuredProjects as $project): ?>
                     <div class="group wow-fade-in-up">
                         <div class="relative overflow-hidden rounded-lg shadow-lg">
-                            <img src="<?php echo getImageUrl('projects/' . ($project['featured_image'] ?? 'placeholder.jpg')); ?>" alt="<?php echo htmlspecialchars($project['title']); ?>" class="w-full h-64 object-cover transform group-hover:scale-110 transition-transform duration-500">
+                            <img src="<?php echo getUploadedImageUrl('' . ($project['thumbnail'] ?? 'placeholder.jpg')); ?>" alt="<?php echo htmlspecialchars($project['title']); ?>" class="w-full h-64 object-cover transform group-hover:scale-110 transition-transform duration-500">
                             <div class="absolute inset-0 bg-black bg-opacity-50 flex items-end p-6">
                                 <div>
                                     <span class="bg-secondary-red text-white text-xs px-3 py-1 rounded-full mb-2 inline-block"><?php echo htmlspecialchars($project['service_category']); ?></span>
@@ -210,7 +210,7 @@ $serviceCategories = getServiceCategories();
                 <?php foreach ($recentBlogPosts as $post): ?>
                     <div class="bg-white rounded-lg shadow-lg overflow-hidden transform hover:-translate-y-2 transition-transform duration-300 wow-fade-in-up">
                         <a href="<?php echo SITE_URL; ?>/blog/<?php echo $post['slug']; ?>">
-                            <img src="<?php echo getImageUrl('blog/' . ($post['featured_image'] ?? 'placeholder.jpg')); ?>" alt="<?php echo htmlspecialchars($post['title']); ?>" class="w-full h-56 object-cover">
+                            <img src="<?php echo getUploadedImageUrl('' . ($post['featured_image'] ?? 'placeholder.jpg')); ?>" alt="<?php echo htmlspecialchars($post['title']); ?>" class="w-full h-56 object-cover">
                         </a>
                         <div class="p-6">
                             <div class="flex items-center justify-between mb-3 text-sm text-gray-500">
@@ -359,7 +359,7 @@ $serviceCategories = getServiceCategories();
                     <article class="bg-gray-50 rounded-lg overflow-hidden shadow-md card-hover">
                         <div class="h-48 bg-gradient-to-br from-primary-blue to-blue-600 flex items-center justify-center">
                             <?php if ($post['featured_image']): ?>
-                                <img src="<?php echo getImageUrl('blog/' . $post['featured_image']); ?>"
+                                <img src="<?php echo getUploadedImageUrl('uploads/blog/' . $post['featured_image']); ?>"
                                     alt="<?php echo htmlspecialchars($post['title']); ?>"
                                     class="w-full h-full object-cover">
                             <?php else: ?>

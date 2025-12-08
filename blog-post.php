@@ -91,7 +91,7 @@ $relatedPosts = array_slice($relatedPosts, 0, 3);
                     <!-- Featured Image -->
                     <?php if ($blogPost['featured_image']): ?>
                         <div class="mb-8">
-                            <img src="<?php echo getImageUrl('blog/' . $blogPost['featured_image']); ?>"
+                            <img src="<?php echo getUploadedImageUrl('uploads/blog/' . $blogPost['featured_image']); ?>"
                                 alt="<?php echo htmlspecialchars($blogPost['title']); ?>"
                                 class="w-full h-64 md:h-80 object-cover rounded-lg shadow-lg">
                         </div>
@@ -221,7 +221,7 @@ $relatedPosts = array_slice($relatedPosts, 0, 3);
                         <article class="bg-white rounded-lg shadow-lg overflow-hidden card-hover">
                             <div class="h-48 bg-gradient-to-br from-primary-blue to-blue-600 flex items-center justify-center">
                                 <?php if ($post['featured_image']): ?>
-                                    <img src="<?php echo getImageUrl('blog/' . $post['featured_image']); ?>"
+                                    <img src="<?php echo getUploadedImageUrl('uploads/blog/' . $post['featured_image']); ?>"
                                         alt="<?php echo htmlspecialchars($post['title']); ?>"
                                         class="w-full h-full object-cover">
                                 <?php else: ?>

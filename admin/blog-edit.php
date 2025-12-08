@@ -16,22 +16,24 @@ $post = [
     'slug' => '',
     'excerpt' => '',
     'content' => '',
-    'image_url' => '',
+    'featured_image' => '',
     'category' => '',
     'author' => $_SESSION['admin_username'],
-    'status' => 'draft',
-    'meta_description' => '',
-    'tags' => ''
+    'status' => 'draft'
 ];
 
 if (!$is_new) {
     $stmt = $db->prepare("SELECT * FROM blog_posts WHERE id = :id");
     $stmt->execute(['id' => $id]);
-    $post = $stmt->fetch(PDO::FETCH_ASSOC);
-    if (!$post) {
+    $fetchedPost = $stmt->fetch(PDO::FETCH_ASSOC);
+    if (!$fetchedPost) {
         header("Location: blog-manage.php");
         exit;
     }
+    // Merge fetched data with defaults to ensure all keys exist and handle nulls
+    $post = array_merge($post, array_filter($fetchedPost, function ($value) {
+        return $value !== null;
+    }));
     $pageTitle = 'Edit Blog Post';
 } else {
     $pageTitle = 'Add New Blog Post';
@@ -45,11 +47,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $category = $_POST['category'] ?? '';
     $author = $_POST['author'] ?? $_SESSION['admin_username'];
     $status = $_POST['status'] ?? 'draft';
-    $meta_description = $_POST['meta_description'] ?? '';
-    $tags = $_POST['tags'] ?? '';
 
     // Image handling
-    $image_url = $_POST['existing_image_url'] ?? '';
+    $featured_image = $_POST['existing_featured_image'] ?? '';
     if (isset($_FILES['image']) && $_FILES['image']['error'] == UPLOAD_ERR_OK) {
         $upload_dir = '../uploads/blog/';
         if (!is_dir($upload_dir)) {
@@ -58,15 +58,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $filename = uniqid() . '-' . basename($_FILES['image']['name']);
         $target_file = $upload_dir . $filename;
         if (move_uploaded_file($_FILES['image']['tmp_name'], $target_file)) {
-            $image_url = 'uploads/blog/' . $filename;
+            $featured_image = 'uploads/blog/' . $filename;
         }
     }
 
     if ($is_new) {
-        $sql = "INSERT INTO blog_posts (title, slug, excerpt, content, image_url, category, author, status, meta_description, tags) VALUES (:title, :slug, :excerpt, :content, :image_url, :category, :author, :status, :meta_description, :tags)";
+        $sql = "INSERT INTO blog_posts (title, slug, excerpt, content, featured_image, category, author, status) VALUES (:title, :slug, :excerpt, :content, :featured_image, :category, :author, :status)";
         $stmt = $db->prepare($sql);
     } else {
-        $sql = "UPDATE blog_posts SET title = :title, slug = :slug, excerpt = :excerpt, content = :content, image_url = :image_url, category = :category, author = :author, status = :status, meta_description = :meta_description, tags = :tags, updated_at = NOW() WHERE id = :id";
+        $sql = "UPDATE blog_posts SET title = :title, slug = :slug, excerpt = :excerpt, content = :content, featured_image = :featured_image, category = :category, author = :author, status = :status, updated_at = NOW() WHERE id = :id";
         $stmt = $db->prepare($sql);
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
     }
@@ -75,12 +75,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->bindParam(':slug', $slug);
     $stmt->bindParam(':excerpt', $excerpt);
     $stmt->bindParam(':content', $content);
-    $stmt->bindParam(':image_url', $image_url);
+    $stmt->bindParam(':featured_image', $featured_image);
     $stmt->bindParam(':category', $category);
     $stmt->bindParam(':author', $author);
     $stmt->bindParam(':status', $status);
-    $stmt->bindParam(':meta_description', $meta_description);
-    $stmt->bindParam(':tags', $tags);
 
     if ($stmt->execute()) {
         header("Location: blog-manage.php?saved=true");
@@ -278,20 +276,14 @@ $categories = getBlogCategories();
                         <div>
                             <label for="excerpt" class="block text-gray-700 text-sm font-bold mb-2">Excerpt</label>
                             <div id="excerpt-editor" style="height: 150px; background: white;"></div>
-                            <textarea id="excerpt" name="excerpt" class="hidden"><?php echo htmlspecialchars($post['excerpt']); ?></textarea>
+                            <textarea id="excerpt" name="excerpt" class="hidden"><?php echo $post['excerpt']; ?></textarea>
                             <p class="text-gray-600 text-xs italic mt-2">A brief summary of your post.</p>
                         </div>
 
                         <div>
                             <label for="content" class="block text-gray-700 text-sm font-bold mb-2">Content *</label>
                             <div id="content-editor" style="height: 400px; background: white;"></div>
-                            <textarea id="content" name="content" class="hidden" required><?php echo htmlspecialchars($post['content']); ?></textarea>
-                        </div>
-
-                        <div>
-                            <label for="meta_description" class="block text-gray-700 text-sm font-bold mb-2">Meta Description</label>
-                            <textarea id="meta_description" name="meta_description" rows="2" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"><?php echo htmlspecialchars($post['meta_description'] ?? ''); ?></textarea>
-                            <p class="text-gray-600 text-xs italic mt-2">For SEO purposes (155 characters max).</p>
+                            <textarea id="content" name="content" class="hidden" required><?php echo $post['content']; ?></textarea>
                         </div>
                     </div>
 
@@ -328,26 +320,20 @@ $categories = getBlogCategories();
                                     <?php endforeach; ?>
                                 </select>
                             </div>
-
-                            <div>
-                                <label for="tags" class="block text-gray-700 text-sm font-bold mb-2">Tags</label>
-                                <input type="text" id="tags" name="tags" value="<?php echo htmlspecialchars($post['tags']); ?>" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-                                <p class="text-gray-600 text-xs italic mt-2">Comma separated.</p>
-                            </div>
                         </div>
 
                         <div class="bg-gray-50 p-4 rounded-lg">
                             <h3 class="font-bold text-gray-700 mb-4">Featured Image</h3>
 
                             <input type="file" id="image" name="image" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-                            <input type="hidden" name="existing_image_url" value="<?php echo htmlspecialchars($post['image_url']); ?>">
+                            <input type="hidden" name="existing_featured_image" value="<?php echo htmlspecialchars($post['featured_image'] ?? ''); ?>">
 
-                            <?php if ($post['image_url']): ?>
-                                <div class="mt-4">
-                                    <p class="text-gray-600 text-xs mb-2">Current Image:</p>
-                                    <img src="../<?php echo htmlspecialchars($post['image_url']); ?>" alt="Current post image" class="w-full h-auto rounded">
-                                </div>
-                            <?php endif; ?>
+                            <?php if (!empty($post['featured_image'])): ?>
+                            <div class="mt-4">
+                                <p class="text-gray-600 text-xs mb-2">Current Image:</p>
+                                <img src="../<?php echo htmlspecialchars($post['featured_image']); ?>" alt="Current post image" class="w-full h-auto rounded">
+                            </div>
+                        <?php endif; ?>
                         </div>
 
                         <button type="submit" class="w-full bg-primary-blue hover:bg-blue-700 text-white font-bold py-3 px-6 rounded focus:outline-none focus:shadow-outline transition duration-300">

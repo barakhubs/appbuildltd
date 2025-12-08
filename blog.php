@@ -101,7 +101,7 @@ if ($search) {
                         data-category="<?php echo htmlspecialchars($post['category']); ?>">
                         <div class="h-48 bg-gradient-to-br from-primary-blue to-blue-600 flex items-center justify-center">
                             <?php if ($post['featured_image']): ?>
-                                <img src="<?php echo getImageUrl('blog/' . $post['featured_image']); ?>"
+                                <img src="<?php echo getUploadedImageUrl('uploads/blog/' . $post['featured_image']); ?>"
                                     alt="<?php echo htmlspecialchars($post['title']); ?>"
                                     class="w-full h-full object-cover">
                             <?php else: ?>

@@ -23,11 +23,15 @@ $service = [
 if (!$is_new) {
     $stmt = $db->prepare("SELECT * FROM service_pages WHERE id = :id");
     $stmt->execute(['id' => $id]);
-    $service = $stmt->fetch(PDO::FETCH_ASSOC);
-    if (!$service) {
+    $fetchedService = $stmt->fetch(PDO::FETCH_ASSOC);
+    if (!$fetchedService) {
         header("Location: services.php");
         exit;
     }
+    // Merge fetched data with defaults to ensure all keys exist and handle nulls
+    $service = array_merge($service, array_filter($fetchedService, function ($value) {
+        return $value !== null;
+    }));
     $pageTitle = 'Edit Service';
 } else {
     $pageTitle = 'Add New Service';
@@ -245,19 +249,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="mb-6">
                     <label for="description" class="block text-gray-700 text-sm font-bold mb-2">Description</label>
                     <div id="description-editor" style="height: 200px; background: white;"></div>
-                    <textarea id="description" name="description" class="hidden"><?php echo htmlspecialchars($service['description']); ?></textarea>
+                    <textarea id="description" name="description" class="hidden"><?php echo $service['description']; ?></textarea>
                 </div>
 
                 <div class="mb-6">
                     <label for="benefits" class="block text-gray-700 text-sm font-bold mb-2">Benefits</label>
                     <div id="benefits-editor" style="height: 250px; background: white;"></div>
-                    <textarea id="benefits" name="benefits" class="hidden"><?php echo htmlspecialchars($service['benefits']); ?></textarea>
+                    <textarea id="benefits" name="benefits" class="hidden"><?php echo $service['benefits']; ?></textarea>
                 </div>
 
                 <div class="mb-6">
                     <label for="use_cases" class="block text-gray-700 text-sm font-bold mb-2">Use Cases</label>
                     <div id="use_cases-editor" style="height: 250px; background: white;"></div>
-                    <textarea id="use_cases" name="use_cases" class="hidden"><?php echo htmlspecialchars($service['use_cases']); ?></textarea>
+                    <textarea id="use_cases" name="use_cases" class="hidden"><?php echo $service['use_cases']; ?></textarea>
                 </div>
 
                 <div class="flex items-center justify-end">

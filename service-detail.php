@@ -40,9 +40,9 @@ $relatedProjects = getProjects(3, $serviceName);
     <div class="container mx-auto px-4 relative z-10">
         <div class="max-w-4xl mx-auto text-center">
             <h1 class="text-4xl md:text-5xl font-bold mb-4"><?php echo htmlspecialchars($serviceData['title']); ?></h1>
-            <p class="text-xl text-blue-100 leading-relaxed">
-                <?php echo htmlspecialchars($serviceData['description']); ?>
-            </p>
+            <div class="text-xl text-blue-100 leading-relaxed">
+                <?php echo $serviceData['description']; ?>
+            </div>
         </div>
     </div>
 </section>
@@ -57,7 +57,7 @@ $relatedProjects = getProjects(3, $serviceName);
                 <div class="mb-8">
                     <div class="h-64 md:h-80 bg-gradient-to-br from-primary-blue to-blue-600 rounded-lg flex items-center justify-center">
                         <?php if ($serviceData['featured_image']): ?>
-                            <img src="<?php echo getUploadedImageUrl($serviceData['featured_image']); ?>"
+                            <img src="<?php echo getUploadedImageUrl('' . $serviceData['featured_image']); ?>"
                                 alt="<?php echo htmlspecialchars($serviceData['title']); ?>"
                                 class="w-full h-full object-cover rounded-lg">
                         <?php else: ?>
@@ -96,7 +96,7 @@ $relatedProjects = getProjects(3, $serviceName);
                         'document-automation' => '<p>Manual document processes are time-consuming, error-prone, and often create compliance challenges. Our document control and automation solutions streamline your document workflows and improve operational efficiency.</p><p>We implement comprehensive document management systems that automate creation, approval, distribution, and archival processes. Our solutions include version control, automated workflows, digital signatures, and compliance tracking features.</p><p>Transform your document-heavy processes with intelligent automation that reduces manual effort, improves accuracy, and ensures compliance with industry regulations while providing complete audit trails and reporting capabilities.</p>'
                     ];
 
-                    echo $detailedDescriptions[$serviceKey] ?? '<p>' . htmlspecialchars($serviceData['description']) . '</p>';
+                    echo $detailedDescriptions[$serviceKey] ?? '<div>' . $serviceData['description'] . '</div>';
                     ?>
                 </div>
 
@@ -110,7 +110,7 @@ $relatedProjects = getProjects(3, $serviceName);
                         ?>
                             <div class="flex items-center p-4 bg-gray-50 rounded-lg">
                                 <i class="fas fa-check-circle text-green-500 text-xl mr-3 flex-shrink-0"></i>
-                                <span class="text-gray-700 font-medium"><?php echo htmlspecialchars($benefit); ?></span>
+                                <span class="text-gray-700 font-medium"><?php echo $benefit; ?></span>
                             </div>
                         <?php endforeach; ?>
                     </div>
@@ -214,7 +214,7 @@ $relatedProjects = getProjects(3, $serviceName);
                     <div class="bg-white rounded-lg shadow-lg overflow-hidden card-hover">
                         <div class="h-48 bg-gradient-to-br from-primary-blue to-blue-600 flex items-center justify-center">
                             <?php if ($project['thumbnail']): ?>
-                                <img src="<?php echo getImageUrl('projects/' . $project['thumbnail']); ?>"
+                                <img src="<?php echo getUploadedImageUrl('uploads/projects/' . $project['thumbnail']); ?>"
                                     alt="<?php echo htmlspecialchars($project['title']); ?>"
                                     class="w-full h-full object-cover">
                             <?php else: ?>

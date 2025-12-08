@@ -250,25 +250,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="mb-6">
                     <label for="description" class="block text-gray-700 text-sm font-bold mb-2">Description</label>
                     <div id="description-editor" style="height: 200px; background: white;"></div>
-                    <textarea id="description" name="description" class="hidden"><?php echo htmlspecialchars($project['description']); ?></textarea>
+                    <textarea id="description" name="description" class="hidden"><?php echo $project['description']; ?></textarea>
                 </div>
 
                 <div class="mb-6">
                     <label for="challenge" class="block text-gray-700 text-sm font-bold mb-2">Challenge</label>
                     <div id="challenge-editor" style="height: 250px; background: white;"></div>
-                    <textarea id="challenge" name="challenge" class="hidden"><?php echo htmlspecialchars($project['challenge']); ?></textarea>
+                    <textarea id="challenge" name="challenge" class="hidden"><?php echo $project['challenge']; ?></textarea>
                 </div>
 
                 <div class="mb-6">
                     <label for="solution" class="block text-gray-700 text-sm font-bold mb-2">Solution</label>
                     <div id="solution-editor" style="height: 250px; background: white;"></div>
-                    <textarea id="solution" name="solution" class="hidden"><?php echo htmlspecialchars($project['solution']); ?></textarea>
+                    <textarea id="solution" name="solution" class="hidden"><?php echo $project['solution']; ?></textarea>
                 </div>
 
                 <div class="mb-6">
                     <label for="results" class="block text-gray-700 text-sm font-bold mb-2">Results</label>
                     <div id="results-editor" style="height: 250px; background: white;"></div>
-                    <textarea id="results" name="results" class="hidden"><?php echo htmlspecialchars($project['results']); ?></textarea>
+                    <textarea id="results" name="results" class="hidden"><?php echo $project['results']; ?></textarea>
                 </div>
 
                 <div class="grid md:grid-cols-2 gap-6">

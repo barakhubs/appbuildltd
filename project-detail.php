@@ -78,9 +78,9 @@ if ($project['images']) {
                     </h1>
 
                     <!-- Short Description -->
-                    <p class="text-xl text-blue-100 leading-relaxed">
-                        <?php echo htmlspecialchars($project['short_description'] ?? truncateText(strip_tags($project['description']), 200)); ?>
-                    </p>
+                    <div class="text-xl text-gray-600 leading-relaxed">
+                        <?php echo $project['description'] ? truncateText(strip_tags($project['description']), 200) : ''; ?>
+                    </div>
 
                     <!-- Project Stats -->
                     <div class="grid grid-cols-2 gap-6 mt-8">
@@ -100,9 +100,9 @@ if ($project['images']) {
 
                 <!-- Featured Image -->
                 <div class="order-first lg:order-last">
-                    <?php if (!empty($project['featured_image'])): ?>
+                    <?php if (!empty($project['thumbnail'])): ?>
                         <div class="relative">
-                            <img src="<?php echo getImageUrl('projects/' . $project['featured_image']); ?>"
+                            <img src="<?php echo getUploadedImageUrl('' . $project['thumbnail']); ?>"
                                 alt="<?php echo htmlspecialchars($project['title']); ?>"
                                 class="w-full h-80 lg:h-96 object-cover rounded-lg shadow-xl">
                             <div class="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent rounded-lg"></div>
@@ -140,7 +140,7 @@ if ($project['images']) {
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <?php foreach ($projectImages as $image): ?>
                                     <div class="relative group">
-                                        <img src="<?php echo getImageUrl('projects/' . $image); ?>"
+                                        <img src="<?php echo getUploadedImageUrl('uploads/projects/' . $image); ?>"
                                             alt="Project Gallery Image"
                                             class="w-full h-64 object-cover rounded-lg shadow-lg group-hover:shadow-xl transition-shadow cursor-pointer">
                                         <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-opacity rounded-lg"></div>
@@ -335,8 +335,8 @@ if ($project['images']) {
                     <?php foreach ($relatedProjects as $relatedProject): ?>
                         <div class="bg-white rounded-lg shadow-lg overflow-hidden card-hover">
                             <div class="h-48 bg-gradient-to-br from-primary-blue to-blue-600 flex items-center justify-center">
-                                <?php if (!empty($relatedProject['featured_image'])): ?>
-                                    <img src="<?php echo getImageUrl('projects/' . $relatedProject['featured_image']); ?>"
+                                <?php if (!empty($relatedProject['thumbnail'])): ?>
+                                    <img src="<?php echo getUploadedImageUrl('' . $relatedProject['thumbnail']); ?>"
                                         alt="<?php echo htmlspecialchars($relatedProject['title']); ?>"
                                         class="w-full h-full object-cover">
                                 <?php else: ?>
