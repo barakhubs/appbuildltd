@@ -1,6 +1,6 @@
-<?php
+﻿<?php
 $pageTitle = 'Our Projects - Portfolio & Case Studies';
-$metaDescription = 'Explore our portfolio of successful projects and case studies. See how AppBuild Ltd. has helped clients achieve their business goals.';
+$metaDescription = 'Explore our portfolio of successful projects and case studies. See how Appbuild Tech Company ltd. has helped clients achieve their business goals.';
 
 require_once 'includes/header.php';
 

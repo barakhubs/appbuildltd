@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once 'config.php';
 
 // Common utility functions
@@ -229,7 +229,7 @@ function getPageTitle($title = '')
 
 function getMetaDescription($description = '')
 {
-    $default = "AppBuild Ltd. specializes in data management, project management, cost management, design management, and application development solutions. Contact us today!";
+    $default = "Appbuild Tech Company ltd. specializes in data management, project management, cost management, design management, and application development solutions. Contact us today!";
     return $description ?: $default;
 }
 

@@ -1,6 +1,6 @@
-<?php
+﻿<?php
 $pageTitle = 'About Us - Your Trusted Business Solutions Partner';
-$metaDescription = 'Learn about AppBuild Ltd., our mission, values, and experienced team dedicated to delivering exceptional business solutions and development services.';
+$metaDescription = 'Learn about Appbuild Tech Company ltd., our mission, values, and experienced team dedicated to delivering exceptional business solutions and development services.';
 
 require_once 'includes/header.php';
 ?>

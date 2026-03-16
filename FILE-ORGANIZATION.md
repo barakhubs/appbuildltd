@@ -1,4 +1,4 @@
-# AppBuild Ltd. - File Organization & Link Verification
+﻿# Appbuild Tech Company ltd. - File Organization & Link Verification
 
 ## Current File Structure ✓
 
@@ -227,7 +227,7 @@ getImageUrl('services/' . $filename)
 All paths are centrally managed in `includes/config.php`:
 
 ```php
-define('SITE_NAME', 'AppBuild Ltd.');
+define('SITE_NAME', 'Appbuild Tech Company ltd.');
 define('SITE_URL', 'http://localhost:9000');
 define('CONTACT_EMAIL', 'info@appbuildltd.com');
 define('PHONE_NUMBER', '+256-783-879681');

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once 'includes/header.php';
 
 // Get project slug from URL
@@ -20,7 +20,7 @@ if (!$project) {
 }
 
 $pageTitle = $project['title'];
-$metaDescription = $project['description'] ? truncateText(strip_tags($project['description']), 160) : 'Discover how AppBuild Ltd. delivered exceptional results for this client project.';
+$metaDescription = $project['description'] ? truncateText(strip_tags($project['description']), 160) : 'Discover how Appbuild Tech Company ltd. delivered exceptional results for this client project.';
 
 // Get related projects (same category)
 $relatedProjects = getProjects(3, $project['category'] ?? '');

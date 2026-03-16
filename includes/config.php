@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 // Load environment variables from .env file
 function loadEnv($path)
 {
@@ -44,7 +44,7 @@ define('DB_USER', $_ENV['DB_USER'] ?? 'postgres');
 define('DB_PASS', $_ENV['DB_PASS'] ?? '');
 
 // Site Configuration
-define('SITE_NAME', $_ENV['SITE_NAME'] ?? 'AppBuild Ltd.');
+define('SITE_NAME', $_ENV['SITE_NAME'] ?? 'Appbuild Tech Company ltd.');
 define('SITE_URL', $_ENV['SITE_URL'] ?? 'http://localhost:9000');
 define('ADMIN_EMAIL', $_ENV['ADMIN_EMAIL'] ?? 'admin@appbuildltd.com');
 define('CONTACT_EMAIL', $_ENV['CONTACT_EMAIL'] ?? 'info@appbuildltd.com');

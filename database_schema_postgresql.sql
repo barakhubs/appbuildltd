@@ -1,4 +1,4 @@
--- AppBuild Ltd. Website Database Schema for PostgreSQL
+﻿-- Appbuild Tech Company ltd. Website Database Schema for PostgreSQL
 -- Create database first: CREATE DATABASE appbuild_website;
 -- Connect to database: \c appbuild_website;
 -- Admin users table

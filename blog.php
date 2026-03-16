@@ -1,6 +1,6 @@
-<?php
+﻿<?php
 $pageTitle = 'Blog - Latest Insights & Industry News';
-$metaDescription = 'Stay updated with our latest insights on business solutions, industry trends, and best practices from AppBuild Ltd.';
+$metaDescription = 'Stay updated with our latest insights on business solutions, industry trends, and best practices from Appbuild Tech Company ltd.';
 
 require_once 'includes/header.php';
 

@@ -1,4 +1,4 @@
-// AppBuild Ltd. Website JavaScript
+﻿// Appbuild Tech Company ltd. Website JavaScript
 
 document.addEventListener("DOMContentLoaded", function () {
   // Mobile menu toggle

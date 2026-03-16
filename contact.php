@@ -1,8 +1,8 @@
-<?php
+﻿<?php
 require_once 'includes/config.php';
 
 $pageTitle = 'Contact Us - Get in Touch Today';
-$metaDescription = 'Contact AppBuild Ltd. for expert business solutions. Call us at ' . PHONE_NUMBER . ' or fill out our contact form to get started.';
+$metaDescription = 'Contact Appbuild Tech Company ltd. for expert business solutions. Call us at ' . PHONE_NUMBER . ' or fill out our contact form to get started.';
 
 require_once 'includes/header.php';
 

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 /**
  * Link Verification Script
@@ -22,7 +22,7 @@ echo "<style>
     .summary { background: #e3f2fd; padding: 15px; border-radius: 5px; margin: 20px 0; }
 </style></head><body><div class='container'>";
 
-echo "<h1>AppBuild Ltd. - Link Verification Report</h1>";
+echo "<h1>Appbuild Tech Company ltd. - Link Verification Report</h1>";
 echo "<p>Generated: " . date('Y-m-d H:i:s') . "</p>";
 
 // Define base path

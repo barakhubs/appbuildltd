@@ -1,4 +1,4 @@
-# AppBuild Ltd. Website
+﻿# Appbuild Tech Company ltd. Website
 
 A professional business website built with PHP, PostgreSQL, and Tailwind CSS featuring comprehensive business solutions and services.
 
@@ -246,7 +246,7 @@ tailwind.config = {
 
 ## License
 
-This project is proprietary software developed for AppBuild Ltd. All rights reserved.
+This project is proprietary software developed for Appbuild Tech Company ltd. All rights reserved.
 
 ## Development Notes
 

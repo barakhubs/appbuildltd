@@ -1,6 +1,6 @@
-<?php
+﻿<?php
 $pageTitle = 'Expert Business Solutions & Development Services';
-$metaDescription = 'AppBuild Ltd. provides comprehensive data management, project management, cost management, design management, and application development solutions. Contact us today!';
+$metaDescription = 'Appbuild Tech Company ltd. provides comprehensive data management, project management, cost management, design management, and application development solutions. Contact us today!';
 
 require_once 'includes/header.php';
 
@@ -56,7 +56,7 @@ $serviceCategories = getServiceCategories();
             <div class="wow-fade-in-right">
                 <h2 class="text-4xl font-bold text-gray-800 mb-6">Your Partner in Digital Transformation</h2>
                 <p class="text-lg text-gray-600 leading-relaxed mb-6">
-                    At AppBuild Ltd., we are more than just a service provider; we are your strategic partner. We specialize in turning complex business challenges into streamlined, technology-driven solutions. Our team of experts is dedicated to understanding your unique needs and delivering measurable results.
+                    At Appbuild Tech Company ltd., we are more than just a service provider; we are your strategic partner. We specialize in turning complex business challenges into streamlined, technology-driven solutions. Our team of experts is dedicated to understanding your unique needs and delivering measurable results.
                 </p>
                 <ul class="space-y-4 text-gray-700 mb-8">
                     <li class="flex items-start"><i class="fas fa-check-circle text-primary-blue text-xl mr-3 mt-1"></i><span><strong>Client-Centric Approach:</strong> We prioritize your goals and work collaboratively to achieve them.</span></li>
@@ -119,7 +119,7 @@ $serviceCategories = getServiceCategories();
 <section class="py-20 bg-white">
     <div class="container mx-auto px-4">
         <div class="text-center mb-16">
-            <h2 class="text-4xl font-bold text-gray-800 mb-4">Why Choose AppBuild Ltd.?</h2>
+            <h2 class="text-4xl font-bold text-gray-800 mb-4">Why Choose Appbuild Tech Company ltd.?</h2>
             <p class="text-lg text-gray-600 max-w-3xl mx-auto">
                 Our commitment to excellence and innovation sets us apart.
             </p>
@@ -273,7 +273,7 @@ $serviceCategories = getServiceCategories();
                     <i class="fas fa-star"></i>
                 </div>
                 <p class="text-gray-700 mb-6 text-lg leading-relaxed italic">
-                    "AppBuild Ltd. transformed our data management processes completely. The efficiency gains
+                    "Appbuild Tech Company ltd. transformed our data management processes completely. The efficiency gains
                     have been remarkable, and their team's expertise is unmatched."
                 </p>
                 <div class="flex items-center pt-4 border-t border-gray-200">
@@ -406,7 +406,7 @@ $serviceCategories = getServiceCategories();
 <section class="py-16 bg-gray-50">
     <div class="container mx-auto px-4">
         <div class="text-center mb-12">
-            <h2 class="text-4xl font-bold text-gray-800 mb-4">Why Choose AppBuild Ltd.?</h2>
+            <h2 class="text-4xl font-bold text-gray-800 mb-4">Why Choose Appbuild Tech Company ltd.?</h2>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-4 gap-8 text-center">

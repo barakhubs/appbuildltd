@@ -1,4 +1,4 @@
--- AppBuild Ltd. Website Database Schema
+﻿-- Appbuild Tech Company ltd. Website Database Schema
 -- Create database first: CREATE DATABASE appbuild_website;
 -- Use database: USE appbuild_website;
 -- Admin users table

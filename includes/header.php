@@ -70,7 +70,7 @@ $currentPage = getCurrentPage();
                 <!-- Logo -->
                 <div class="flex items-center">
                     <a href="<?php echo SITE_URL; ?>" class="text-2xl font-bold text-primary-blue">
-                        <?php echo SITE_NAME; ?>
+                        AppBuild Tech
                     </a>
                 </div>
 
