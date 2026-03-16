@@ -61,7 +61,6 @@ $cleanUrlMap = [
     'projects' => 'projects.php',
     'blog' => 'blog.php',
     'contact' => 'contact.php',
-    'url-test' => 'url-test.php',
 ];
 
 // Remove trailing slash and check clean URL map
@@ -99,7 +98,11 @@ if (is_dir($path)) {
 
 // Return 404 for unmatched routes
 http_response_code(404);
-echo "<h1>404 - Page Not Found</h1>";
-echo "<p>The requested URL '$request' was not found on this server.</p>";
-echo "<p><a href='/'>Return to Home</a></p>";
+if (is_file('404.php')) {
+    include '404.php';
+} else {
+    echo "<h1>404 - Page Not Found</h1>";
+    echo "<p>The requested URL '$request' was not found on this server.</p>";
+    echo "<p><a href='/'>Return to Home</a></p>";
+}
 return true;

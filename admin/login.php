@@ -12,17 +12,25 @@ $error = '';
 $success = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $username = sanitizeInput($_POST['username'] ?? '');
-    $password = $_POST['password'] ?? '';
-
-    if (empty($username) || empty($password)) {
-        $error = 'Please fill in all fields.';
+    // Verify CSRF token
+    if (!verifyCSRFToken($_POST['csrf_token'] ?? '')) {
+        $error = 'Invalid form submission. Please try again.';
     } else {
-        if (loginAdmin($username, $password)) {
-            header('Location: index.php');
-            exit();
+        $username = sanitizeInput($_POST['username'] ?? '');
+        $password = $_POST['password'] ?? '';
+
+        if (empty($username) || empty($password)) {
+            $error = 'Please fill in all fields.';
         } else {
-            $error = 'Invalid username or password.';
+            $result = loginAdmin($username, $password);
+            if ($result['locked']) {
+                $error = "Too many failed attempts. Please try again in {$result['minutes']} minute(s).";
+            } elseif ($result['success']) {
+                header('Location: index.php');
+                exit();
+            } else {
+                $error = 'Invalid username or password.';
+            }
         }
     }
 }

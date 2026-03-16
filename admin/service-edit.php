@@ -38,48 +38,65 @@ if (!$is_new) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $title = $_POST['title'] ?? '';
-    $service_key = !empty($_POST['service_key']) ? createSlug($_POST['service_key']) : createSlug($title);
-    $description = $_POST['description'] ?? '';
-    $benefits = $_POST['benefits'] ?? '';
-    $use_cases = $_POST['use_cases'] ?? '';
-
-    // Image handling
-    $featured_image = $_POST['existing_featured_image'] ?? '';
-    if (isset($_FILES['featured_image']) && $_FILES['featured_image']['error'] == UPLOAD_ERR_OK) {
-        $upload_dir = '../uploads/services/';
-        if (!is_dir($upload_dir)) {
-            mkdir($upload_dir, 0777, true);
-        }
-        $filename = uniqid() . '-' . basename($_FILES['featured_image']['name']);
-        $target_file = $upload_dir . $filename;
-        if (move_uploaded_file($_FILES['featured_image']['tmp_name'], $target_file)) {
-            $featured_image = 'uploads/services/' . $filename;
-        }
-    }
-
-    if ($is_new) {
-        $sql = "INSERT INTO service_pages (title, service_key, description, benefits, use_cases, featured_image) VALUES (:title, :service_key, :description, :benefits, :use_cases, :featured_image)";
-        $stmt = $db->prepare($sql);
+    // CSRF protection
+    if (!verifyCSRFToken($_POST['csrf_token'] ?? '')) {
+        $error = 'Invalid form submission. Please try again.';
     } else {
-        $sql = "UPDATE service_pages SET title = :title, service_key = :service_key, description = :description, benefits = :benefits, use_cases = :use_cases, featured_image = :featured_image WHERE id = :id";
-        $stmt = $db->prepare($sql);
-        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
-    }
+        $title = sanitizeInput($_POST['title'] ?? '');
+        $service_key = !empty($_POST['service_key']) ? createSlug($_POST['service_key']) : createSlug($title);
+        $description = $_POST['description'] ?? '';
+        $benefits = $_POST['benefits'] ?? '';
+        $use_cases = $_POST['use_cases'] ?? '';
 
-    $stmt->bindParam(':title', $title);
-    $stmt->bindParam(':service_key', $service_key);
-    $stmt->bindParam(':description', $description);
-    $stmt->bindParam(':benefits', $benefits);
-    $stmt->bindParam(':use_cases', $use_cases);
-    $stmt->bindParam(':featured_image', $featured_image);
+        // Image handling
+        $featured_image = $_POST['existing_featured_image'] ?? '';
+        if (isset($_FILES['featured_image']) && $_FILES['featured_image']['error'] == UPLOAD_ERR_OK) {
+            $allowedMimes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+            $maxSize = 5 * 1024 * 1024; // 5 MB
+            $fileMime = mime_content_type($_FILES['featured_image']['tmp_name']);
+            if (!in_array($fileMime, $allowedMimes)) {
+                $error = 'Only JPG, PNG, GIF, and WebP images are allowed.';
+            } elseif ($_FILES['featured_image']['size'] > $maxSize) {
+                $error = 'Image file size must not exceed 5 MB.';
+            } else {
+                $upload_dir = '../uploads/services/';
+                if (!is_dir($upload_dir)) {
+                    mkdir($upload_dir, 0755, true);
+                }
+                $ext = pathinfo($_FILES['featured_image']['name'], PATHINFO_EXTENSION);
+                $filename = uniqid() . '.' . strtolower($ext);
+                $target_file = $upload_dir . $filename;
+                if (move_uploaded_file($_FILES['featured_image']['tmp_name'], $target_file)) {
+                    $featured_image = 'uploads/services/' . $filename;
+                }
+            }
+        }
 
-    if ($stmt->execute()) {
-        header("Location: services.php?saved=true");
-        exit;
-    } else {
-        $error = "Error saving service.";
-    }
+        if (empty($error)) {
+            if ($is_new) {
+                $sql = "INSERT INTO service_pages (title, service_key, description, benefits, use_cases, featured_image) VALUES (:title, :service_key, :description, :benefits, :use_cases, :featured_image)";
+                $stmt = $db->prepare($sql);
+            } else {
+                $sql = "UPDATE service_pages SET title = :title, service_key = :service_key, description = :description, benefits = :benefits, use_cases = :use_cases, featured_image = :featured_image WHERE id = :id";
+                $stmt = $db->prepare($sql);
+                $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+            }
+
+            $stmt->bindParam(':title', $title);
+            $stmt->bindParam(':service_key', $service_key);
+            $stmt->bindParam(':description', $description);
+            $stmt->bindParam(':benefits', $benefits);
+            $stmt->bindParam(':use_cases', $use_cases);
+            $stmt->bindParam(':featured_image', $featured_image);
+
+            if ($stmt->execute()) {
+                header("Location: services.php?saved=true");
+                exit;
+            } else {
+                $error = "Error saving service.";
+            }
+        } // end empty($error)
+    } // end CSRF check
 }
 
 ?>
@@ -221,6 +238,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <?php endif; ?>
 
             <form action="service-edit.php?id=<?php echo $id; ?>" method="POST" enctype="multipart/form-data" class="bg-white shadow-lg rounded-lg p-8">
+                <input type="hidden" name="csrf_token" value="<?php echo generateCSRFToken(); ?>">
                 <input type="hidden" name="id" value="<?php echo htmlspecialchars($service['id']); ?>">
 
                 <div class="mb-6">

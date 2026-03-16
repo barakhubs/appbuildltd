@@ -93,10 +93,43 @@ RewriteRule ^([^.]+)/?$ $1.php [L]
     Deny from all
 </Files>
 
-<Files "database_schema.sql">
+<Files ".env">
     Order Allow,Deny
     Deny from all
 </Files>
+
+<Files ".env.example">
+    Order Allow,Deny
+    Deny from all
+</Files>
+
+# Protect database schema directory
+<IfModule mod_authz_core.c>
+    <Directory "database">
+        Require all denied
+    </Directory>
+    <Directory "docs">
+        Require all denied
+    </Directory>
+    <Directory "tools">
+        Require all denied
+    </Directory>
+</IfModule>
+# Apache 2.2 fallback
+<IfModule !mod_authz_core.c>
+    <Directory "database">
+        Order Allow,Deny
+        Deny from all
+    </Directory>
+    <Directory "docs">
+        Order Allow,Deny
+        Deny from all
+    </Directory>
+    <Directory "tools">
+        Order Allow,Deny
+        Deny from all
+    </Directory>
+</IfModule>
 
 # Block access to admin files from unauthorized IPs (optional)
 # Uncomment and add your IP addresses for additional security

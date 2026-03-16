@@ -43,56 +43,76 @@ if (!$is_new) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $title = $_POST['title'] ?? '';
-    $slug = !empty($_POST['slug']) ? createSlug($_POST['slug']) : createSlug($title);
-    $description = $_POST['description'] ?? '';
-    $challenge = $_POST['challenge'] ?? '';
-    $solution = $_POST['solution'] ?? '';
-    $results = $_POST['results'] ?? '';
-    $client_name = $_POST['client_name'] ?? '';
-    $service_category = $_POST['service_category'] ?? '';
-    $featured = isset($_POST['featured']) ? 1 : 0;
-
-    // Image handling
-    $thumbnail = $_POST['existing_thumbnail'] ?? '';
-    if (isset($_FILES['thumbnail_file']) && $_FILES['thumbnail_file']['error'] == UPLOAD_ERR_OK) {
-        $upload_dir = '../uploads/projects/';
-        if (!is_dir($upload_dir)) {
-            mkdir($upload_dir, 0777, true);
-        }
-        $filename = uniqid() . '-' . basename($_FILES['thumbnail_file']['name']);
-        $target_file = $upload_dir . $filename;
-        if (move_uploaded_file($_FILES['thumbnail_file']['tmp_name'], $target_file)) {
-            $thumbnail = 'uploads/projects/' . $filename;
-        }
-    }
-
-    if ($is_new) {
-        $sql = "INSERT INTO projects (title, slug, description, challenge, solution, results, thumbnail, client_name, service_category, featured) VALUES (:title, :slug, :description, :challenge, :solution, :results, :thumbnail, :client_name, :service_category, :featured)";
-        $stmt = $db->prepare($sql);
+    // CSRF protection
+    if (!verifyCSRFToken($_POST['csrf_token'] ?? '')) {
+        $error = 'Invalid form submission. Please try again.';
     } else {
-        $sql = "UPDATE projects SET title = :title, slug = :slug, description = :description, challenge = :challenge, solution = :solution, results = :results, thumbnail = :thumbnail, client_name = :client_name, service_category = :service_category, featured = :featured WHERE id = :id";
-        $stmt = $db->prepare($sql);
-        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
-    }
+        $title = sanitizeInput($_POST['title'] ?? '');
+        $slug = !empty($_POST['slug']) ? createSlug($_POST['slug']) : createSlug($title);
+        $description = $_POST['description'] ?? '';
+        $challenge = $_POST['challenge'] ?? '';
+        $solution = $_POST['solution'] ?? '';
+        $results = $_POST['results'] ?? '';
+        $client_name = sanitizeInput($_POST['client_name'] ?? '');
+        $service_category = sanitizeInput($_POST['service_category'] ?? '');
+        $featured = isset($_POST['featured']) ? 1 : 0;
 
-    $stmt->bindParam(':title', $title);
-    $stmt->bindParam(':slug', $slug);
-    $stmt->bindParam(':description', $description);
-    $stmt->bindParam(':challenge', $challenge);
-    $stmt->bindParam(':solution', $solution);
-    $stmt->bindParam(':results', $results);
-    $stmt->bindParam(':thumbnail', $thumbnail);
-    $stmt->bindParam(':client_name', $client_name);
-    $stmt->bindParam(':service_category', $service_category);
-    $stmt->bindParam(':featured', $featured, PDO::PARAM_BOOL);
+        // Ensure slug is unique
+        $slug = makeUniqueSlug('projects', 'slug', $slug, $is_new ? null : $id);
 
-    if ($stmt->execute()) {
-        header("Location: projects.php?saved=true");
-        exit;
-    } else {
-        $error = "Error saving project.";
-    }
+        // Image handling
+        $thumbnail = $_POST['existing_thumbnail'] ?? '';
+        if (isset($_FILES['thumbnail_file']) && $_FILES['thumbnail_file']['error'] == UPLOAD_ERR_OK) {
+            $allowedMimes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+            $maxSize = 5 * 1024 * 1024; // 5 MB
+            $fileMime = mime_content_type($_FILES['thumbnail_file']['tmp_name']);
+            if (!in_array($fileMime, $allowedMimes)) {
+                $error = 'Only JPG, PNG, GIF, and WebP images are allowed.';
+            } elseif ($_FILES['thumbnail_file']['size'] > $maxSize) {
+                $error = 'Image file size must not exceed 5 MB.';
+            } else {
+                $upload_dir = '../uploads/projects/';
+                if (!is_dir($upload_dir)) {
+                    mkdir($upload_dir, 0755, true);
+                }
+                $ext = pathinfo($_FILES['thumbnail_file']['name'], PATHINFO_EXTENSION);
+                $filename = uniqid() . '.' . strtolower($ext);
+                $target_file = $upload_dir . $filename;
+                if (move_uploaded_file($_FILES['thumbnail_file']['tmp_name'], $target_file)) {
+                    $thumbnail = 'uploads/projects/' . $filename;
+                }
+            }
+        }
+
+        if (empty($error)) {
+            if ($is_new) {
+                $sql = "INSERT INTO projects (title, slug, description, challenge, solution, results, thumbnail, client_name, service_category, featured) VALUES (:title, :slug, :description, :challenge, :solution, :results, :thumbnail, :client_name, :service_category, :featured)";
+                $stmt = $db->prepare($sql);
+            } else {
+                $sql = "UPDATE projects SET title = :title, slug = :slug, description = :description, challenge = :challenge, solution = :solution, results = :results, thumbnail = :thumbnail, client_name = :client_name, service_category = :service_category, featured = :featured WHERE id = :id";
+                $stmt = $db->prepare($sql);
+                $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+            }
+
+            $stmt->bindParam(':title', $title);
+            $stmt->bindParam(':slug', $slug);
+            $stmt->bindParam(':description', $description);
+            $stmt->bindParam(':challenge', $challenge);
+            $stmt->bindParam(':solution', $solution);
+            $stmt->bindParam(':results', $results);
+            $stmt->bindParam(':thumbnail', $thumbnail);
+            $stmt->bindParam(':client_name', $client_name);
+            $stmt->bindParam(':service_category', $service_category);
+            $stmt->bindParam(':featured', $featured, PDO::PARAM_BOOL);
+
+            if ($stmt->execute()) {
+                header("Location: projects.php?saved=true");
+                exit;
+            } else {
+                $error = "Error saving project.";
+            }
+        } // end empty($error)
+    } // end CSRF check
 }
 
 ?>
@@ -234,6 +254,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <?php endif; ?>
 
             <form action="project-edit.php?id=<?php echo $id; ?>" method="POST" enctype="multipart/form-data" class="bg-white shadow-lg rounded-lg p-8">
+                <input type="hidden" name="csrf_token" value="<?php echo generateCSRFToken(); ?>">
                 <input type="hidden" name="id" value="<?php echo htmlspecialchars($project['id']); ?>">
 
                 <div class="mb-6">

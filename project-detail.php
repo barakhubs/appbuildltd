@@ -1,12 +1,17 @@
 ﻿<?php
-require_once 'includes/header.php';
+require_once 'includes/config.php';
+require_once 'includes/functions.php';
 
 // Get project slug from URL
 $slug = $_GET['slug'] ?? '';
 
 if (empty($slug)) {
-    header('HTTP/1.0 404 Not Found');
-    echo '<h1>Project Not Found</h1><p>The requested project does not exist.</p>';
+    http_response_code(404);
+    $pageTitle = '404 - Project Not Found';
+    $metaDescription = '';
+    require_once 'includes/header.php';
+    echo '<div class="container mx-auto px-4 py-20 text-center"><h1 class="text-3xl font-bold">Project Not Found</h1><p class="mt-4"><a href="/projects" class="text-primary-blue">View All Projects</a></p></div>';
+    require_once 'includes/footer.php';
     exit;
 }
 
@@ -14,13 +19,19 @@ if (empty($slug)) {
 $project = getProjectBySlug($slug);
 
 if (!$project) {
-    header('HTTP/1.0 404 Not Found');
-    echo '<h1>Project Not Found</h1><p>The requested project does not exist.</p>';
+    http_response_code(404);
+    $pageTitle = '404 - Project Not Found';
+    $metaDescription = '';
+    require_once 'includes/header.php';
+    echo '<div class="container mx-auto px-4 py-20 text-center"><h1 class="text-3xl font-bold">Project Not Found</h1><p class="mt-4"><a href="/projects" class="text-primary-blue">View All Projects</a></p></div>';
+    require_once 'includes/footer.php';
     exit;
 }
 
 $pageTitle = $project['title'];
 $metaDescription = $project['description'] ? truncateText(strip_tags($project['description']), 160) : 'Discover how Appbuild Tech Company ltd. delivered exceptional results for this client project.';
+
+require_once 'includes/header.php';
 
 // Get related projects (same category)
 $relatedProjects = getProjects(3, $project['category'] ?? '');

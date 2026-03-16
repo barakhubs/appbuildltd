@@ -1,12 +1,17 @@
 <?php
-require_once 'includes/header.php';
+require_once 'includes/config.php';
+require_once 'includes/functions.php';
 
 // Get blog post slug from URL
 $slug = $_GET['slug'] ?? '';
 
 if (empty($slug)) {
-    header('HTTP/1.0 404 Not Found');
-    echo '<h1>Blog Post Not Found</h1><p>The requested blog post does not exist.</p>';
+    http_response_code(404);
+    $pageTitle = '404 - Post Not Found';
+    $metaDescription = '';
+    require_once 'includes/header.php';
+    echo '<div class="container mx-auto px-4 py-20 text-center"><h1 class="text-3xl font-bold">Blog Post Not Found</h1><p class="mt-4"><a href="/blog" class="text-primary-blue">View All Posts</a></p></div>';
+    require_once 'includes/footer.php';
     exit;
 }
 
@@ -14,13 +19,19 @@ if (empty($slug)) {
 $blogPost = getBlogPostBySlug($slug);
 
 if (!$blogPost) {
-    header('HTTP/1.0 404 Not Found');
-    echo '<h1>Blog Post Not Found</h1><p>The requested blog post does not exist.</p>';
+    http_response_code(404);
+    $pageTitle = '404 - Post Not Found';
+    $metaDescription = '';
+    require_once 'includes/header.php';
+    echo '<div class="container mx-auto px-4 py-20 text-center"><h1 class="text-3xl font-bold">Blog Post Not Found</h1><p class="mt-4"><a href="/blog" class="text-primary-blue">View All Posts</a></p></div>';
+    require_once 'includes/footer.php';
     exit;
 }
 
 $pageTitle = $blogPost['title'];
 $metaDescription = $blogPost['excerpt'] ? truncateText(strip_tags($blogPost['excerpt']), 160) : truncateText(strip_tags($blogPost['content']), 160);
+
+require_once 'includes/header.php';
 
 // Get related posts (same category)
 $relatedPosts = getBlogPosts(3, $blogPost['category']);

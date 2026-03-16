@@ -10,7 +10,10 @@ $messageType = '';
 
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (isset($_POST['update_profile'])) {
+    if (!verifyCSRFToken($_POST['csrf_token'] ?? '')) {
+        $message = 'Invalid form submission. Please try again.';
+        $messageType = 'error';
+    } elseif (isset($_POST['update_profile'])) {
         // Update username and email
         $newUsername = trim($_POST['username']);
         $newEmail = trim($_POST['email']);
@@ -182,6 +185,7 @@ $pageTitle = 'Account Settings';
                         </h3>
                     </div>
                     <form method="POST" class="p-6">
+                        <input type="hidden" name="csrf_token" value="<?php echo generateCSRFToken(); ?>">
                         <div class="space-y-4">
                             <div>
                                 <label for="username" class="block text-sm font-medium text-gray-700 mb-1">
@@ -225,6 +229,7 @@ $pageTitle = 'Account Settings';
                         </h3>
                     </div>
                     <form method="POST" class="p-6">
+                        <input type="hidden" name="csrf_token" value="<?php echo generateCSRFToken(); ?>">
                         <div class="space-y-4">
                             <div>
                                 <label for="current_password" class="block text-sm font-medium text-gray-700 mb-1">

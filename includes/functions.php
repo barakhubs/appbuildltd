@@ -72,7 +72,7 @@ function getDB()
     return Database::getInstance()->getConnection();
 }
 
-function getBlogPosts($limit = null, $category = null, $status = 'published')
+function getBlogPosts($limit = null, $category = null, $status = 'published', $offset = 0)
 {
     $db = getDB();
     $sql = "SELECT * FROM blog_posts WHERE status = :status";
@@ -86,13 +86,14 @@ function getBlogPosts($limit = null, $category = null, $status = 'published')
     $sql .= " ORDER BY created_at DESC";
 
     if ($limit) {
-        $sql .= " LIMIT :limit";
+        $sql .= " LIMIT :limit OFFSET :offset";
     }
 
     $stmt = $db->prepare($sql);
 
     if ($limit) {
         $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
     }
 
     foreach ($params as $key => $value) {
@@ -111,7 +112,7 @@ function getBlogPostBySlug($slug)
     return $stmt->fetch();
 }
 
-function getProjects($limit = null, $category = null, $featured = null, $status = 'published')
+function getProjects($limit = null, $category = null, $featured = null, $status = 'published', $offset = 0)
 {
     $db = getDB();
     $sql = "SELECT * FROM projects WHERE status = :status";
@@ -130,13 +131,14 @@ function getProjects($limit = null, $category = null, $featured = null, $status 
     $sql .= " ORDER BY featured DESC, created_at DESC";
 
     if ($limit) {
-        $sql .= " LIMIT :limit";
+        $sql .= " LIMIT :limit OFFSET :offset";
     }
 
     $stmt = $db->prepare($sql);
 
     if ($limit) {
         $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
     }
 
     foreach ($params as $key => $value) {
@@ -197,19 +199,39 @@ function requireAdminLogin()
 
 function loginAdmin($username, $password)
 {
+    // Brute-force protection: lock out after 5 failed attempts for 15 minutes
+    if (!isset($_SESSION['login_attempts'])) {
+        $_SESSION['login_attempts'] = 0;
+        $_SESSION['login_lockout_until'] = 0;
+    }
+
+    if ($_SESSION['login_lockout_until'] > time()) {
+        $remaining = ceil(($_SESSION['login_lockout_until'] - time()) / 60);
+        return ['locked' => true, 'minutes' => $remaining];
+    }
+
     $db = getDB();
     $stmt = $db->prepare("SELECT * FROM admin_users WHERE username = :username");
     $stmt->execute(['username' => $username]);
     $user = $stmt->fetch();
 
     if ($user && password_verify($password, $user['password'])) {
+        // Reset failed attempts and regenerate session to prevent fixation
+        $_SESSION['login_attempts'] = 0;
+        $_SESSION['login_lockout_until'] = 0;
+        session_regenerate_id(true);
         $_SESSION['admin_logged_in'] = true;
         $_SESSION['admin_user_id'] = $user['id'];
         $_SESSION['admin_username'] = $user['username'];
-        return true;
+        return ['locked' => false, 'success' => true];
     }
 
-    return false;
+    $_SESSION['login_attempts']++;
+    if ($_SESSION['login_attempts'] >= 5) {
+        $_SESSION['login_lockout_until'] = time() + (15 * 60);
+        $_SESSION['login_attempts'] = 0;
+    }
+    return ['locked' => false, 'success' => false];
 }
 
 function logoutAdmin()
@@ -276,4 +298,62 @@ function validatePhone($phone)
 function validateRequired($value)
 {
     return !empty(trim($value));
+}
+
+// Slug uniqueness helper
+function isUniqueSlug($table, $slugColumn, $slug, $excludeId = null)
+{
+    $db = getDB();
+    $allowedTables = ['blog_posts', 'projects', 'service_pages'];
+    if (!in_array($table, $allowedTables)) {
+        return false;
+    }
+    if ($excludeId) {
+        $stmt = $db->prepare("SELECT COUNT(*) FROM {$table} WHERE {$slugColumn} = :slug AND id != :id");
+        $stmt->execute([':slug' => $slug, ':id' => $excludeId]);
+    } else {
+        $stmt = $db->prepare("SELECT COUNT(*) FROM {$table} WHERE {$slugColumn} = :slug");
+        $stmt->execute([':slug' => $slug]);
+    }
+    return (int)$stmt->fetchColumn() === 0;
+}
+
+function makeUniqueSlug($table, $slugColumn, $baseSlug, $excludeId = null)
+{
+    $slug = $baseSlug;
+    $counter = 2;
+    while (!isUniqueSlug($table, $slugColumn, $slug, $excludeId)) {
+        $slug = $baseSlug . '-' . $counter;
+        $counter++;
+    }
+    return $slug;
+}
+
+// Pagination helpers
+function getTotalBlogPosts($category = null, $status = 'published')
+{
+    $db = getDB();
+    $sql = "SELECT COUNT(*) FROM blog_posts WHERE status = :status";
+    $params = ['status' => $status];
+    if ($category) {
+        $sql .= " AND category = :category";
+        $params['category'] = $category;
+    }
+    $stmt = $db->prepare($sql);
+    $stmt->execute($params);
+    return (int)$stmt->fetchColumn();
+}
+
+function getTotalProjects($category = null, $status = 'published')
+{
+    $db = getDB();
+    $sql = "SELECT COUNT(*) FROM projects WHERE status = :status";
+    $params = ['status' => $status];
+    if ($category) {
+        $sql .= " AND service_category = :category";
+        $params['category'] = $category;
+    }
+    $stmt = $db->prepare($sql);
+    $stmt->execute($params);
+    return (int)$stmt->fetchColumn();
 }

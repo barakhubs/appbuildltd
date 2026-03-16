@@ -3,7 +3,6 @@
 function loadEnv($path)
 {
     if (!file_exists($path)) {
-        echo __DIR__ . '/../.env';
         die('.env file not found. Please copy .env.example to .env and configure your settings.');
     }
 
@@ -96,7 +95,10 @@ class Database
                 ]
             );
         } catch (PDOException $e) {
-            die("Connection failed: " . $e->getMessage());
+            if (defined('ENVIRONMENT') && ENVIRONMENT !== 'production') {
+                die("Connection failed: " . $e->getMessage());
+            }
+            die("A database error occurred. Please try again later.");
         }
     }
 

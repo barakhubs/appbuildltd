@@ -1,5 +1,6 @@
 <?php
-require_once 'includes/header.php';
+require_once 'includes/config.php';
+require_once 'includes/functions.php';
 
 // Get service parameter
 $serviceKey = $_GET['service'] ?? '';
@@ -7,8 +8,12 @@ $serviceKey = $_GET['service'] ?? '';
 // Validate service key
 $validServices = array_keys(getServiceCategories());
 if (!in_array($serviceKey, $validServices)) {
-    header('HTTP/1.0 404 Not Found');
-    echo '<h1>Service Not Found</h1><p>The requested service does not exist.</p>';
+    http_response_code(404);
+    $pageTitle = '404 - Service Not Found';
+    $metaDescription = '';
+    require_once 'includes/header.php';
+    echo '<div class="container mx-auto px-4 py-20 text-center"><h1 class="text-3xl font-bold">Service Not Found</h1><p class="mt-4"><a href="/services" class="text-primary-blue">View All Services</a></p></div>';
+    require_once 'includes/footer.php';
     exit;
 }
 
@@ -29,6 +34,8 @@ if (!$serviceData) {
 
 $pageTitle = $serviceData['title'] . ' - Professional Solutions';
 $metaDescription = 'Expert ' . strtolower($serviceName) . ' services. ' . truncateText(strip_tags($serviceData['description']), 150);
+
+require_once 'includes/header.php';
 
 // Get related projects
 $relatedProjects = getProjects(3, $serviceName);

@@ -40,52 +40,72 @@ if (!$is_new) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $title = $_POST['title'] ?? '';
-    $slug = !empty($_POST['slug']) ? createSlug($_POST['slug']) : createSlug($title);
-    $excerpt = $_POST['excerpt'] ?? '';
-    $content = $_POST['content'] ?? '';
-    $category = $_POST['category'] ?? '';
-    $author = $_POST['author'] ?? $_SESSION['admin_username'];
-    $status = $_POST['status'] ?? 'draft';
-
-    // Image handling
-    $featured_image = $_POST['existing_featured_image'] ?? '';
-    if (isset($_FILES['image']) && $_FILES['image']['error'] == UPLOAD_ERR_OK) {
-        $upload_dir = '../uploads/blog/';
-        if (!is_dir($upload_dir)) {
-            mkdir($upload_dir, 0777, true);
-        }
-        $filename = uniqid() . '-' . basename($_FILES['image']['name']);
-        $target_file = $upload_dir . $filename;
-        if (move_uploaded_file($_FILES['image']['tmp_name'], $target_file)) {
-            $featured_image = 'uploads/blog/' . $filename;
-        }
-    }
-
-    if ($is_new) {
-        $sql = "INSERT INTO blog_posts (title, slug, excerpt, content, featured_image, category, author, status) VALUES (:title, :slug, :excerpt, :content, :featured_image, :category, :author, :status)";
-        $stmt = $db->prepare($sql);
+    // CSRF protection
+    if (!verifyCSRFToken($_POST['csrf_token'] ?? '')) {
+        $error = 'Invalid form submission. Please try again.';
     } else {
-        $sql = "UPDATE blog_posts SET title = :title, slug = :slug, excerpt = :excerpt, content = :content, featured_image = :featured_image, category = :category, author = :author, status = :status, updated_at = NOW() WHERE id = :id";
-        $stmt = $db->prepare($sql);
-        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
-    }
+        $title = sanitizeInput($_POST['title'] ?? '');
+        $slug = !empty($_POST['slug']) ? createSlug($_POST['slug']) : createSlug($title);
+        $excerpt = $_POST['excerpt'] ?? '';
+        $content = $_POST['content'] ?? '';
+        $category = sanitizeInput($_POST['category'] ?? '');
+        $author = sanitizeInput($_POST['author'] ?? $_SESSION['admin_username']);
+        $status = sanitizeInput($_POST['status'] ?? 'draft');
 
-    $stmt->bindParam(':title', $title);
-    $stmt->bindParam(':slug', $slug);
-    $stmt->bindParam(':excerpt', $excerpt);
-    $stmt->bindParam(':content', $content);
-    $stmt->bindParam(':featured_image', $featured_image);
-    $stmt->bindParam(':category', $category);
-    $stmt->bindParam(':author', $author);
-    $stmt->bindParam(':status', $status);
+        // Ensure slug is unique
+        $slug = makeUniqueSlug('blog_posts', 'slug', $slug, $is_new ? null : $id);
 
-    if ($stmt->execute()) {
-        header("Location: blog-manage.php?saved=true");
-        exit;
-    } else {
-        $error = "Error saving blog post.";
-    }
+        // Image handling
+        $featured_image = $_POST['existing_featured_image'] ?? '';
+        if (isset($_FILES['image']) && $_FILES['image']['error'] == UPLOAD_ERR_OK) {
+            $allowedMimes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+            $maxSize = 5 * 1024 * 1024; // 5 MB
+            $fileMime = mime_content_type($_FILES['image']['tmp_name']);
+            if (!in_array($fileMime, $allowedMimes)) {
+                $error = 'Only JPG, PNG, GIF, and WebP images are allowed.';
+            } elseif ($_FILES['image']['size'] > $maxSize) {
+                $error = 'Image file size must not exceed 5 MB.';
+            } else {
+                $upload_dir = '../uploads/blog/';
+                if (!is_dir($upload_dir)) {
+                    mkdir($upload_dir, 0755, true);
+                }
+                $ext = pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
+                $filename = uniqid() . '.' . strtolower($ext);
+                $target_file = $upload_dir . $filename;
+                if (move_uploaded_file($_FILES['image']['tmp_name'], $target_file)) {
+                    $featured_image = 'uploads/blog/' . $filename;
+                }
+            }
+        }
+
+        if (empty($error)) {
+            if ($is_new) {
+                $sql = "INSERT INTO blog_posts (title, slug, excerpt, content, featured_image, category, author, status) VALUES (:title, :slug, :excerpt, :content, :featured_image, :category, :author, :status)";
+                $stmt = $db->prepare($sql);
+            } else {
+                $sql = "UPDATE blog_posts SET title = :title, slug = :slug, excerpt = :excerpt, content = :content, featured_image = :featured_image, category = :category, author = :author, status = :status, updated_at = NOW() WHERE id = :id";
+                $stmt = $db->prepare($sql);
+                $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+            }
+
+            $stmt->bindParam(':title', $title);
+            $stmt->bindParam(':slug', $slug);
+            $stmt->bindParam(':excerpt', $excerpt);
+            $stmt->bindParam(':content', $content);
+            $stmt->bindParam(':featured_image', $featured_image);
+            $stmt->bindParam(':category', $category);
+            $stmt->bindParam(':author', $author);
+            $stmt->bindParam(':status', $status);
+
+            if ($stmt->execute()) {
+                header("Location: blog-manage.php?saved=true");
+                exit;
+            } else {
+                $error = "Error saving blog post.";
+            }
+        } // end empty($error)
+    } // end CSRF check
 }
 
 $categories = getBlogCategories();
@@ -257,6 +277,7 @@ $categories = getBlogCategories();
             <?php endif; ?>
 
             <form action="blog-edit.php?id=<?php echo $id; ?>" method="POST" enctype="multipart/form-data" class="bg-white shadow-lg rounded-lg p-8">
+                <input type="hidden" name="csrf_token" value="<?php echo generateCSRFToken(); ?>">
                 <input type="hidden" name="id" value="<?php echo htmlspecialchars($post['id']); ?>">
 
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
